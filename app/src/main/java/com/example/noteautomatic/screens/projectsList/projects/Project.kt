@@ -1,4 +1,4 @@
-package com.example.noteautomatic.model
+package com.example.noteautomatic.screens.projectsList.projects
 
 data class Project(
     val id: Long,

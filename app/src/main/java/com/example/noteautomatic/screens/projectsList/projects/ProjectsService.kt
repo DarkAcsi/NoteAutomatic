@@ -1,4 +1,4 @@
-package com.example.noteautomatic.model
+package com.example.noteautomatic.screens.projectsList.projects
 
 typealias ProjectsListener = (projects: List<Project>) -> Unit
 
@@ -34,7 +34,7 @@ class ProjectsService {
 
     fun moveUpProject(project: Project) {
         val oldIndex = projects.indexOfFirst { it.id == project.id }
-        if (oldIndex != -1){
+        if (oldIndex != -1) {
             projects = ArrayList(projects)
             projects.removeAt(oldIndex)
             projects.add(0, project)
