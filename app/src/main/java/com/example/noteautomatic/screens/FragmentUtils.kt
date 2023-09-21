@@ -4,6 +4,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.noteautomatic.App
+import com.example.noteautomatic.Navigator
+import com.example.noteautomatic.screens.projectRun.ProjectRunViewModel
 import com.example.noteautomatic.screens.projectsList.ProjectsListViewModel
 
 class ViewModelFactory(
@@ -16,6 +18,10 @@ class ViewModelFactory(
                 ProjectsListViewModel(app.projectsService)
             }
 
+            ProjectRunViewModel::class.java -> {
+                ProjectRunViewModel(app.projectsService)
+            }
+
             else -> {
                 throw IllegalStateException("Unknown view model class")
             }
@@ -25,3 +31,5 @@ class ViewModelFactory(
 }
 
 fun Fragment.factory() = ViewModelFactory(requireContext().applicationContext as App)
+
+fun Fragment.navigator() = requireActivity() as Navigator

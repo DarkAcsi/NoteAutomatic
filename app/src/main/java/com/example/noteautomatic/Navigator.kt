@@ -4,7 +4,7 @@ import com.example.noteautomatic.screens.projectsList.projects.Project
 
 interface Navigator {
 
-    fun openProject(project: Project)
+    fun playProject(project: Project)
 
     fun goBack()
 

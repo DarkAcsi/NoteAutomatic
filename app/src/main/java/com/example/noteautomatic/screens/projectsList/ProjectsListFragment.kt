@@ -13,6 +13,7 @@ import com.example.noteautomatic.screens.projectsList.projects.Project
 import com.example.noteautomatic.screens.projectsList.projects.ProjectActionListener
 import com.example.noteautomatic.screens.projectsList.projects.ProjectsAdapter
 import com.example.noteautomatic.screens.factory
+import com.example.noteautomatic.screens.navigator
 
 class ProjectsListFragment : Fragment() {
 
@@ -26,6 +27,7 @@ class ProjectsListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         binding = FragmentProjectListBinding.inflate(inflater, container, false)
         adapter = ProjectsAdapter(object : ProjectActionListener {
 
@@ -45,8 +47,8 @@ class ProjectsListFragment : Fragment() {
                 viewModel.selectProject(project)
             }
 
-            override fun onProjectDetails(project: Project) {
-                // todo onProjectDetails
+            override fun onProjectPlay(project: Project) {
+                navigator().playProject(project)
             }
         })
 

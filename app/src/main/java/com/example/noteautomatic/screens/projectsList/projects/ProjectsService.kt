@@ -1,5 +1,7 @@
 package com.example.noteautomatic.screens.projectsList.projects
 
+import com.example.noteautomatic.ProjectNotFoundException
+
 typealias ProjectsListener = (projects: List<Project>) -> Unit
 
 class ProjectsService {
@@ -13,14 +15,20 @@ class ProjectsService {
             Project(
                 id = it.toLong(),
 //            position = it.toLong(),
-                name = "project $it",
-                listPages = null
+                name = "project $it"
             )
         }.toMutableList()
     }
 
     fun getProjects(): List<Project> {
         return projects
+    }
+
+    fun getById(id: Long): FullProject {
+        val project = projects.firstOrNull{it.id == id} ?: throw ProjectNotFoundException()
+        return FullProject(
+            project = project
+        )
     }
 
     fun deleteProject(project: Project) {

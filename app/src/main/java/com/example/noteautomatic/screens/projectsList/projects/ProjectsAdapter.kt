@@ -20,7 +20,7 @@ interface ProjectActionListener {
 
     fun onProjectSelect(project: Project)
 
-    fun onProjectDetails(project: Project)
+    fun onProjectPlay(project: Project)
 
 }
 
@@ -62,7 +62,7 @@ class ProjectsAdapter(private val actionListener: ProjectActionListener) :
             }
 
             else -> {
-                actionListener.onProjectDetails(project)
+                actionListener.onProjectPlay(project)
             }
         }
     }
