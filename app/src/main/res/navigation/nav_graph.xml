@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/projectsListFragment">
+
+    <fragment
+        android:id="@+id/projectsListFragment"
+        android:name="com.example.noteautomatic.screens.projectsList.ProjectsListFragment"
+        android:label=""
+        tools:layout="@layout/fragment_project_list">
+        <action
+            android:id="@+id/action_projectsListFragment_to_projectCreationFragment"
+            app:destination="@id/projectCreationFragment" />
+        <action
+            android:id="@+id/action_projectsListFragment_to_projectRunFragment"
+            app:destination="@id/projectRunFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/projectCreationFragment"
+        android:name="com.example.noteautomatic.screens.projectCreation.ProjectCreationFragment"
+        android:label="{projectName}"
+        tools:layout="@layout/fragment_project_creation">
+        <action
+            android:id="@+id/action_projectCreationFragment_to_projectRunFragment"
+            app:destination="@id/projectRunFragment" />
+        <argument
+            android:name="projectId"
+            app:argType="long" />
+        <argument
+            android:name="projectName"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/projectRunFragment"
+        android:name="com.example.noteautomatic.screens.projectRun.ProjectRunFragment"
+        android:label="{projectName}"
+        tools:layout="@layout/fragment_project_run">
+        <action
+            android:id="@+id/action_projectRunFragment_to_projectCreationFragment"
+            app:destination="@id/projectCreationFragment" />
+        <argument
+            android:name="projectId"
+            app:argType="long" />
+        <argument
+            android:name="projectName"
+            app:argType="string" />
+    </fragment>
+</navigation>

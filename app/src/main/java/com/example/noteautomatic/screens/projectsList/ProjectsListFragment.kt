@@ -1,46 +1,39 @@
 package com.example.noteautomatic.screens.projectsList
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.noteautomatic.R
 import com.example.noteautomatic.databinding.FragmentProjectListBinding
-import com.example.noteautomatic.screens.projectsList.projects.Project
-import com.example.noteautomatic.screens.projectsList.projects.ProjectActionListener
-import com.example.noteautomatic.screens.projectsList.projects.ProjectsAdapter
 import com.example.noteautomatic.screens.factory
 import com.example.noteautomatic.screens.navigator
 
-class ProjectsListFragment : Fragment() {
+class ProjectsListFragment : Fragment(R.layout.fragment_project_list) {
 
     private lateinit var binding: FragmentProjectListBinding
     private lateinit var adapter: ProjectsAdapter
 
     private val viewModel: ProjectsListViewModel by viewModels { factory() }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        binding = FragmentProjectListBinding.inflate(inflater, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentProjectListBinding.bind(view)
         adapter = ProjectsAdapter(object : ProjectActionListener {
 
             override fun onProjectSetting(project: Project) {
-                viewModel.settingProject(project)
+                val direction =
+                    ProjectsListFragmentDirections.actionProjectsListFragmentToProjectCreationFragment(
+                        projectId = project.id,
+                        projectName = project.name
+                    )
+                navigator().navigateTo(direction)
             }
 
             override fun onProjectDelete(project: Project) {
                 viewModel.deleteProject(project)
-            }
-
-            override fun onProjectMoveUp(project: Project) {
-                viewModel.moveUpProject(project)
             }
 
             override fun onProjectSelect(project: Project) {
@@ -48,7 +41,12 @@ class ProjectsListFragment : Fragment() {
             }
 
             override fun onProjectPlay(project: Project) {
-                navigator().playProject(project)
+                val direction =
+                    ProjectsListFragmentDirections.actionProjectsListFragmentToProjectRunFragment(
+                        projectId = project.id,
+                        projectName = project.name
+                    )
+                navigator().navigateTo(direction)
             }
         })
 
@@ -64,8 +62,6 @@ class ProjectsListFragment : Fragment() {
         if (itemAnimator is DefaultItemAnimator) {
             itemAnimator.supportsChangeAnimations = false
         }
-
-        return binding.root
     }
 
 }

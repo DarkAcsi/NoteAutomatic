@@ -3,12 +3,11 @@ package com.example.noteautomatic.screens.projectsList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.noteautomatic.screens.projectsList.projects.Project
-import com.example.noteautomatic.screens.projectsList.projects.ProjectsListener
-import com.example.noteautomatic.screens.projectsList.projects.ProjectsService
+import com.example.noteautomatic.repositories.ProjectsListener
+import com.example.noteautomatic.repositories.ProjectsRepository
 
 class ProjectsListViewModel(
-    private val projectsService: ProjectsService
+    private val projectsService: ProjectsRepository
 ) : ViewModel() {
 
     private val _projects = MutableLiveData<List<Project>>()
@@ -33,19 +32,15 @@ class ProjectsListViewModel(
     }
 
     fun settingProject(project: Project) {
-        // todo settingProject
+        // todo?(settingProject)
     }
 
     fun deleteProject(project: Project) {
         projectsService.deleteProject(project)
     }
 
-    fun moveUpProject(project: Project) {
-        projectsService.moveUpProject(project)
-    }
-
     fun selectProject(project: Project) {
-        // todo selectProject
+        // todo(selectProject)
     }
 
 }

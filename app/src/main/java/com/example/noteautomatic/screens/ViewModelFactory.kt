@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.noteautomatic.App
 import com.example.noteautomatic.Navigator
+import com.example.noteautomatic.screens.projectCreation.ProjectCreationViewModel
 import com.example.noteautomatic.screens.projectRun.ProjectRunViewModel
 import com.example.noteautomatic.screens.projectsList.ProjectsListViewModel
 
@@ -20,6 +21,10 @@ class ViewModelFactory(
 
             ProjectRunViewModel::class.java -> {
                 ProjectRunViewModel(app.projectsService)
+            }
+
+            ProjectCreationViewModel::class.java -> {
+                ProjectCreationViewModel(app.projectsService)
             }
 
             else -> {

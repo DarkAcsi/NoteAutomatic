@@ -1,10 +1,9 @@
-package com.example.noteautomatic.screens.projectsList.projects
+package com.example.noteautomatic.repositories
 
-import com.example.noteautomatic.ProjectNotFoundException
+import com.example.noteautomatic.screens.projectsList.FullProject
+import com.example.noteautomatic.screens.projectsList.Project
 
-typealias ProjectsListener = (projects: List<Project>) -> Unit
-
-class ProjectsService {
+class ProjectsRepositoryRealization : ProjectsRepository {
 
     private var projects = mutableListOf<Project>()
 
@@ -20,18 +19,18 @@ class ProjectsService {
         }.toMutableList()
     }
 
-    fun getProjects(): List<Project> {
+    override fun getProjects(): List<Project> {
         return projects
     }
 
-    fun getById(id: Long): FullProject {
-        val project = projects.firstOrNull{it.id == id} ?: throw ProjectNotFoundException()
+    override fun getById(id: Long): FullProject {
+        val project = projects.firstOrNull { it.id == id } ?: throw ProjectNotFoundException()
         return FullProject(
             project = project
         )
     }
 
-    fun deleteProject(project: Project) {
+    override fun deleteProject(project: Project) {
         val indexToDelete = projects.indexOfFirst { it.id == project.id }
         if (indexToDelete != -1) {
             projects = ArrayList(projects)
@@ -40,27 +39,16 @@ class ProjectsService {
         }
     }
 
-    fun moveUpProject(project: Project) {
-        val oldIndex = projects.indexOfFirst { it.id == project.id }
-        if (oldIndex != -1) {
-            projects = ArrayList(projects)
-            projects.removeAt(oldIndex)
-            projects.add(0, project)
-            notifyChanges()
-        }
-    }
-
-    fun addListener(listener: ProjectsListener) {
+    override fun addListener(listener: ProjectsListener) {
         listeners.add(listener)
         listener.invoke(projects)
     }
 
-    fun removeListener(listener: ProjectsListener) {
+    override fun removeListener(listener: ProjectsListener) {
         listeners.remove(listener)
     }
 
     private fun notifyChanges() {
         listeners.forEach { it.invoke(projects) }
     }
-
 }

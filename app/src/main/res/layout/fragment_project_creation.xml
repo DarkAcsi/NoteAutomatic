@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="com.example.noteautomatic.screens.projectCreation.ProjectCreationFragment">
 
     <Button
         android:id="@+id/button2"
@@ -26,18 +27,18 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/btnToMenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Button" />
+            android:text="metu" />
 
         <Button
-            android:id="@+id/button4"
+            android:id="@+id/btnToRun"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Button" />
+            android:text="run" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.example.noteautomatic.screens.projectRun
+package com.example.noteautomatic.screens.projectCreation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,7 +7,7 @@ import com.example.noteautomatic.screens.projectsList.FullProject
 import com.example.noteautomatic.repositories.ProjectNotFoundException
 import com.example.noteautomatic.repositories.ProjectsRepository
 
-class ProjectRunViewModel(
+class ProjectCreationViewModel(
     private val projectsService: ProjectsRepository
 ) : ViewModel() {
 
@@ -26,5 +26,4 @@ class ProjectRunViewModel(
         val projectRun = this.projectRun.value ?: return
         projectsService.deleteProject(projectRun.project)
     }
-
 }

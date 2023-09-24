@@ -1,13 +1,13 @@
 package com.example.noteautomatic
 
-import com.example.noteautomatic.screens.projectsList.projects.Project
+import android.os.Bundle
+import androidx.navigation.NavDirections
 
 interface Navigator {
 
-    fun playProject(project: Project)
-
+    fun navigateTo(direction: NavDirections)
+    fun navigateTo(destination: Int, args: Bundle? = null)
+    fun toMenu()
     fun goBack()
-
     fun toast(messageRes: Int)
-
 }
