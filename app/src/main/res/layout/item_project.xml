@@ -4,15 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground"
+    android:background="@android:color/transparent"
     android:paddingBottom="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_round_item_project"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" >
 
         <TextView
             android:id="@+id/tvItemProject"
@@ -23,7 +25,7 @@
             android:gravity="center_vertical"
             android:paddingHorizontal="16dp"
             android:textColor="#292727"
-            android:textSize="24dp"
+            android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/new_project" />
@@ -34,14 +36,10 @@
             android:layout_height="62dp"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Play button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@android:drawable/ic_media_play" />
-
-<!--        пожалуйста если возможно оставь такой вариан, где одна картинка менятеся разными
-            но поменяй в фале projects adapter указание на новую картинку
-            там три вызова setImageResource, что за что надеюсь понятно-->
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
