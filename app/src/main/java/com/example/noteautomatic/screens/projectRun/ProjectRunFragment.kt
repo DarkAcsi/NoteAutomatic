@@ -31,7 +31,7 @@ class ProjectRunFragment : Fragment(R.layout.fragment_project_run) {
         navigator().onToolbarVisibilityChanged(false)
 
         viewModel.projectRun.observe(viewLifecycleOwner) {
-            binding.tvNameProject.text = it.project.name
+//            binding.tvNameProject.text = it.project.name
         }
 
 

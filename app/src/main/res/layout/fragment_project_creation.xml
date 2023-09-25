@@ -7,38 +7,107 @@
     tools:context="com.example.noteautomatic.screens.projectCreation.ProjectCreationFragment">
 
     <Button
-        android:id="@+id/button2"
-        android:layout_width="326dp"
-        android:layout_height="238dp"
-        android:layout_marginTop="36dp"
-        android:text="Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginBottom="16dp"
-        android:orientation="horizontal"
+        android:id="@+id/btnToRun"
+        android:layout_width="375dp"
+        android:layout_height="57dp"
+        android:layout_weight="1"
+        android:text="run"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <Button
-            android:id="@+id/btnToMenu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="metu" />
+    <Button
+        android:id="@+id/btnCancelProject"
+        android:layout_width="153dp"
+        android:layout_height="58dp"
+        android:text="Cancel"
+        app:layout_constraintBottom_toTopOf="@+id/btnToRun"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <Button
-            android:id="@+id/btnToRun"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="run" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="169dp"
+        android:layout_height="62dp"
+        android:text="Button"
+        app:layout_constraintBottom_toTopOf="@+id/btnToRun"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <SeekBar
+        android:id="@+id/sbSpeed"
+        android:layout_width="257dp"
+        android:layout_height="28dp"
+        tools:layout_editor_absoluteX="31dp"
+        tools:layout_editor_absoluteY="486dp" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="%"
+        tools:layout_editor_absoluteX="360dp"
+        tools:layout_editor_absoluteY="485dp" />
+
+    <EditText
+        android:id="@+id/edSpeed"
+        android:layout_width="65dp"
+        android:layout_height="59dp"
+        android:ems="10"
+        android:inputType="numberSigned"
+        tools:layout_editor_absoluteX="295dp"
+        tools:layout_editor_absoluteY="469dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvImages"
+        android:layout_width="379dp"
+        android:layout_height="193dp"
+        tools:layout_editor_absoluteX="18dp"
+        tools:layout_editor_absoluteY="220dp" />
+
+    <Button
+        android:id="@+id/btnAddFile"
+        android:layout_width="139dp"
+        android:layout_height="117dp"
+        android:text="add file"
+        tools:layout_editor_absoluteX="39dp"
+        tools:layout_editor_absoluteY="92dp" />
+
+    <Button
+        android:id="@+id/btnAddImage"
+        android:layout_width="189dp"
+        android:layout_height="115dp"
+        android:text="add image"
+        tools:layout_editor_absoluteX="202dp"
+        tools:layout_editor_absoluteY="91dp" />
+
+    <EditText
+        android:id="@+id/editTextText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name"
+        tools:layout_editor_absoluteX="93dp"
+        tools:layout_editor_absoluteY="26dp" />
+
+    <TextView
+        android:id="@+id/editTextText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name"
+        tools:layout_editor_absoluteX="93dp"
+        tools:layout_editor_absoluteY="26dp" />
+
+    <Button
+        android:id="@+id/btnRename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="rename"
+        tools:layout_editor_absoluteX="302dp"
+        tools:layout_editor_absoluteY="22dp" />
+
+    <!--    edittext и textview должны накладываться друг на друга, то есть будет виден
+            только один из них, а какой конкретно будет определено программно-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

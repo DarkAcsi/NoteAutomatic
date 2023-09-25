@@ -61,19 +61,19 @@ class ProjectsAdapter(private val actionListener: ProjectActionListener) :
                 if (!selected) {
                     Log.d("adapte", "onProjectPlay")
                     actionListener.onProjectPlay(project)
-                }
-                else {
+                } else {
                     selected = actionListener.onProjectSelectMore(project)
-                    Log.d("adapte","onProjectSelectMore $selected")
+                    Log.d("adapte", "onProjectSelectMore $selected")
                 }
             }
+
             else -> {
                 if (!selected) {
                     Log.d("adapte", "onProjectSetting")
                     actionListener.onProjectSetting(project)
                 } else {
                     selected = actionListener.onProjectSelectMore(project)
-                    Log.d("adapte","onProjectSelectMore $selected")
+                    Log.d("adapte", "onProjectSelectMore $selected")
                 }
             }
         }
@@ -109,8 +109,6 @@ class ProjectsAdapter(private val actionListener: ProjectActionListener) :
         with(holder.binding) {
             tvItemProject.text = project.name
             ivPlay.tag = project
-            ivCheck.tag = project
-            ivUncheck.tag = project
             when (project.selected) {
                 true -> {
                     ivPlay.setImageResource(android.R.drawable.checkbox_on_background)

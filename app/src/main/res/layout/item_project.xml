@@ -38,6 +38,10 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@android:drawable/ic_media_play" />
 
+<!--        пожалуйста если возможно оставь такой вариан, где одна картинка менятеся разными
+            но поменяй в фале projects adapter указание на новую картинку
+            там три вызова setImageResource, что за что надеюсь понятно-->
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
