@@ -14,8 +14,6 @@ interface ProjectActionListener {
 
     fun onProjectSetting(project: Project)
 
-    fun onProjectsDelete(project: Project)
-
     fun onProjectsSelect(project: Project, selected: Boolean)
 
     fun onProjectSelectMore(project: Project): Boolean

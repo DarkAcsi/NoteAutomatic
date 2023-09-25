@@ -1,5 +1,6 @@
 package com.example.noteautomatic.repositories
 
+import android.util.Log
 import com.example.noteautomatic.screens.projectsList.FullProject
 import com.example.noteautomatic.screens.projectsList.Project
 
@@ -29,15 +30,13 @@ class ProjectsRepositoryRealization : ProjectsRepository {
             projects[i] = pr.copy(selected = selected)
         }
         notifyChanges()
+        Log.d("aaa", "selectAllProjects")
     }
 
     override fun selectProjects(project: Project, selected: Boolean) {
         val index = projects.indexOfFirst { it.id == project.id }
         selectAllProjects(if (selected) false else null)
-        if (index == -1) {
-            notifyChanges()
-            return
-        }
+        if (index == -1) return
         projects[index] = projects[index].copy(selected = if (selected) true else null)
         notifyChanges()
     }
@@ -55,12 +54,8 @@ class ProjectsRepositoryRealization : ProjectsRepository {
         return true
     }
 
-    override fun isAllSelected(): Boolean {
-        val count = projects.count { it.selected == true }
-        return count == projects.count()
-    }
-
     override fun getById(id: Long): FullProject {
+        if (id == 0.toLong()) return FullProject(Project(0, ""))
         val project = projects.firstOrNull { it.id == id } ?: throw ProjectNotFoundException()
         return FullProject(
             project = project
@@ -77,13 +72,8 @@ class ProjectsRepositoryRealization : ProjectsRepository {
     }
 
     override fun deleteProjects() {
-        projects.forEachIndexed { i, it ->
-            if (it.selected == true)
-                projects.removeAt(it.id.toInt())
-            else projects[i] = projects[i].copy(selected = null)
-        }
-        projects = ArrayList(projects)
-        notifyChanges()
+        projects = projects.filter { it.selected == false }.toMutableList()
+        selectAllProjects(null)
     }
 
     override fun addListener(listener: ProjectsListener) {

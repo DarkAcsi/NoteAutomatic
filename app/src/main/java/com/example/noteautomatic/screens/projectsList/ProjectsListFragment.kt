@@ -28,7 +28,7 @@ class ProjectsListFragment : Fragment(R.layout.fragment_project_list) {
         binding.toolbar.toolbarSelected.visibility = View.INVISIBLE
 
         binding.btnAddProject.setOnClickListener {
-            if (selected) {
+            if (!selected) {
                 val direction =
                     ProjectsListFragmentDirections.actionProjectsListFragmentToProjectCreationFragment(
                         projectId = 0,
@@ -53,67 +53,61 @@ class ProjectsListFragment : Fragment(R.layout.fragment_project_list) {
                 selectedAll = true
                 viewModel.selectAllProjects(true)
             }
+        }
 
-            adapter = ProjectsAdapter(object : ProjectActionListener {
+        adapter = ProjectsAdapter(object : ProjectActionListener {
 
-                override fun onProjectSetting(project: Project) {
-                    val direction =
-                        ProjectsListFragmentDirections.actionProjectsListFragmentToProjectCreationFragment(
-                            projectId = project.id,
-                            projectName = project.name
-                        )
-                    navigator().navigateTo(direction)
-                }
-
-                override fun onProjectsDelete(project: Project) {
-                    selected = false
-                    stateToolbarButton(false)
-                    viewModel.deleteProjects()
-                }
-
-                override fun onProjectsSelect(project: Project, select: Boolean) {
-                    selected = select
-                    stateToolbarButton(selected)
-                    viewModel.selectProjects(project, selected)
-                }
-
-                override fun onProjectSelectMore(project: Project): Boolean {
-                    selected = viewModel.selectMoreProject(project)
-                    selectedAll = viewModel.isAllSelected()
-                    binding.toolbar.cbSelectedAll.isSelected = selectedAll
-                    stateToolbarButton(selected)
-                    return selected
-                }
-
-                override fun onProjectPlay(project: Project) {
-                    val direction =
-                        ProjectsListFragmentDirections.actionProjectsListFragmentToProjectRunFragment(
-                            projectId = project.id,
-                            projectName = project.name
-                        )
-                    navigator().navigateTo(direction)
-                }
-            })
-
-            viewModel.projects.observe(viewLifecycleOwner) {
-                adapter.projects = it
+            override fun onProjectSetting(project: Project) {
+                val direction =
+                    ProjectsListFragmentDirections.actionProjectsListFragmentToProjectCreationFragment(
+                        projectId = project.id,
+                        projectName = project.name
+                    )
+                navigator().navigateTo(direction)
             }
 
-            val layoutManager = LinearLayoutManager(requireContext())
-            binding.rvProjectList.layoutManager = layoutManager
-            binding.rvProjectList.adapter = adapter
-
-            val itemAnimator = binding.rvProjectList.itemAnimator
-            if (itemAnimator is DefaultItemAnimator) {
-                itemAnimator.supportsChangeAnimations = false
+            override fun onProjectsSelect(project: Project, select: Boolean) {
+                selected = select
+                stateToolbarButton(selected)
+                viewModel.selectProjects(project, selected)
             }
+
+            override fun onProjectSelectMore(project: Project): Boolean {
+                selected = viewModel.selectMoreProject(project)
+                stateToolbarButton(selected)
+                return selected
+            }
+
+            override fun onProjectPlay(project: Project) {
+                val direction =
+                    ProjectsListFragmentDirections.actionProjectsListFragmentToProjectRunFragment(
+                        projectId = project.id,
+                        projectName = project.name
+                    )
+                navigator().navigateTo(direction)
+            }
+        })
+
+        viewModel.projects.observe(viewLifecycleOwner) {
+            adapter.projects = it
+        }
+
+        val layoutManager = LinearLayoutManager(requireContext())
+        layoutManager.reverseLayout = true;
+        layoutManager.stackFromEnd = true;
+        binding.rvProjectList.layoutManager = layoutManager
+        binding.rvProjectList.adapter = adapter
+
+        val itemAnimator = binding.rvProjectList.itemAnimator
+        if (itemAnimator is DefaultItemAnimator) {
+            itemAnimator.supportsChangeAnimations = false
         }
     }
 
     override fun onResume() {
         super.onResume()
         navigator().onToolbarVisibilityChanged(false)
-        binding.toolbar.toolbarSelected.visibility = View.INVISIBLE
+        binding.toolbar.toolbarSelected.visibility = View.GONE
     }
 
     private fun stateToolbarButton(select: Boolean) {
@@ -123,7 +117,7 @@ class ProjectsListFragment : Fragment(R.layout.fragment_project_list) {
                 toolbar.toolbarSelected.visibility = View.VISIBLE
             } else {
                 btnAddProject.text = "Add"
-                toolbar.toolbarSelected.visibility = View.INVISIBLE
+                toolbar.toolbarSelected.visibility = View.GONE
             }
         }
     }

@@ -47,8 +47,4 @@ class ProjectsListViewModel(
         return projectsRepository.selectMoreProjects(project)
     }
 
-    fun isAllSelected(): Boolean{
-        return projectsRepository.isAllSelected()
-    }
-
 }

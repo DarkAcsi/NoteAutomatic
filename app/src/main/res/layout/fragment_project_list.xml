@@ -17,9 +17,9 @@
         app:layout_constraintBottom_toTopOf="@+id/btnAddProject"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/item_project"
-        tools:itemCount="40"/>
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        tools:itemCount="40"
+        tools:listitem="@layout/item_project" />
 
     <Button
         android:id="@+id/btnAddProject"
@@ -33,6 +33,8 @@
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/toolbar_selected" />
+        layout="@layout/toolbar_selected"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
