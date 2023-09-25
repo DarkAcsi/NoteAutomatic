@@ -1,5 +1,7 @@
 package com.example.noteautomatic.screens.projectsList
 
+import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +14,11 @@ interface ProjectActionListener {
 
     fun onProjectSetting(project: Project)
 
-    fun onProjectDelete(project: Project)
+    fun onProjectsDelete(project: Project)
 
-    fun onProjectSelect(project: Project)
+    fun onProjectsSelect(project: Project, selected: Boolean)
+
+    fun onProjectSelectMore(project: Project): Boolean
 
     fun onProjectPlay(project: Project)
 
@@ -35,42 +39,68 @@ class ProjectDiffCallback(
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         return oldList[oldItemPosition] == newList[newItemPosition] // Project - data class
     }
-
 }
 
 class ProjectsAdapter(private val actionListener: ProjectActionListener) :
-    RecyclerView.Adapter<ProjectsAdapter.ProjectsViewHolder>(), View.OnClickListener {
+    RecyclerView.Adapter<ProjectsAdapter.ProjectsViewHolder>(),
+    View.OnClickListener, View.OnLongClickListener {
+
+    private var selected = false
 
     var projects: List<Project> = emptyList()
         set(newValue) {
             val diffCallback = ProjectDiffCallback(field, newValue)
             val diffResult =
-                DiffUtil.calculateDiff(diffCallback) // false вторым аргументом - убрать анимацию
+                DiffUtil.calculateDiff(diffCallback)
             field = newValue
             diffResult.dispatchUpdatesTo(this)
         }
 
-    override fun onClick(v: View) {
-        val project = v.tag as Project
+    override fun onClick(v: View?) {
+        val project = v?.tag as Project
         when (v.id) {
-            R.id.ivActions -> {
-                actionListener.onProjectPlay(project)
+            R.id.ivPlay -> {
+                if (!selected) {
+                    Log.d("adapte", "onProjectPlay")
+                    actionListener.onProjectPlay(project)
+                }
+                else {
+                    selected = actionListener.onProjectSelectMore(project)
+                    Log.d("adapte","onProjectSelectMore $selected")
+                }
             }
-
             else -> {
-                actionListener.onProjectSetting(project)
+                if (!selected) {
+                    Log.d("adapte", "onProjectSetting")
+                    actionListener.onProjectSetting(project)
+                } else {
+                    selected = actionListener.onProjectSelectMore(project)
+                    Log.d("adapte","onProjectSelectMore $selected")
+                }
             }
         }
     }
 
+    override fun onLongClick(v: View?): Boolean {
+        val project = v?.tag as Project
+        if (!selected) {
+            selected = true
+            actionListener.onProjectsSelect(project, this.selected)
+            return true
+        }
+        return false
+    }
+
     override fun getItemCount(): Int = projects.size
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectsViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemProjectBinding.inflate(inflater, parent, false)
 
         binding.root.setOnClickListener(this)
-        binding.ivActions.setOnClickListener(this)
+        binding.root.setOnLongClickListener(this)
+        binding.ivPlay.setOnClickListener(this)
 
         return ProjectsViewHolder(binding)
     }
@@ -80,10 +110,24 @@ class ProjectsAdapter(private val actionListener: ProjectActionListener) :
         holder.itemView.tag = project
         with(holder.binding) {
             tvItemProject.text = project.name
-            ivActions.tag = project
+            ivPlay.tag = project
+            ivCheck.tag = project
+            ivUncheck.tag = project
+            when (project.selected) {
+                true -> {
+                    ivPlay.setImageResource(android.R.drawable.checkbox_on_background)
+                }
+
+                false -> {
+                    ivPlay.setImageResource(android.R.drawable.checkbox_off_background)
+                }
+
+                else -> {
+                    ivPlay.setImageResource(android.R.drawable.ic_media_play)
+                }
+            }
         }
     }
-
 
     class ProjectsViewHolder(
         val binding: ItemProjectBinding

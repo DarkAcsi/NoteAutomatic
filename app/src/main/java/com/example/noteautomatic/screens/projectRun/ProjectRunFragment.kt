@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import com.example.noteautomatic.R
 import com.example.noteautomatic.databinding.FragmentProjectRunBinding
@@ -27,12 +26,13 @@ class ProjectRunFragment : Fragment(R.layout.fragment_project_run) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding = FragmentProjectRunBinding.bind(view)
 
-        viewModel.projectRun.observe(viewLifecycleOwner, Observer {
+        navigator().onToolbarVisibilityChanged(false)
+
+        viewModel.projectRun.observe(viewLifecycleOwner) {
             binding.tvNameProject.text = it.project.name
-        })
+        }
 
 
         binding.btnToMenu.setOnClickListener {
@@ -43,10 +43,20 @@ class ProjectRunFragment : Fragment(R.layout.fragment_project_run) {
             val direction =
                 ProjectRunFragmentDirections.actionProjectRunFragmentToProjectCreationFragment(
                     projectId = args.projectId,
-                    projectName = args.projectName ?: ""
+                    projectName = args.projectName
                 )
             navigator().navigateTo(direction)
         }
+
+        binding.root.setOnClickListener{
+            navigator().onToolbarVisibilityChanged(true)
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        navigator().onToolbarVisibilityChanged(false)
     }
 
 }

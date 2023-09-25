@@ -9,6 +9,7 @@ import com.example.noteautomatic.screens.projectCreation.ProjectCreationViewMode
 import com.example.noteautomatic.screens.projectRun.ProjectRunViewModel
 import com.example.noteautomatic.screens.projectsList.ProjectsListViewModel
 
+@Suppress("UNCHECKED_CAST")
 class ViewModelFactory(
     private val app: App
 ) : ViewModelProvider.Factory {

@@ -8,6 +8,6 @@ interface Navigator {
     fun navigateTo(direction: NavDirections)
     fun navigateTo(destination: Int, args: Bundle? = null)
     fun toMenu()
-    fun goBack()
-    fun toast(messageRes: Int)
+    fun onToolbarVisibilityChanged(visible: Boolean)
+
 }

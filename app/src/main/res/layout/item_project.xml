@@ -16,7 +16,7 @@
 
         <TextView
             android:id="@+id/tvItemProject"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="62dp"
             android:layout_weight="1"
             android:clickable="false"
@@ -24,13 +24,12 @@
             android:paddingHorizontal="16dp"
             android:textColor="#292727"
             android:textSize="24dp"
-            app:layout_constraintEnd_toStartOf="@+id/ivActions"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/new_project" />
 
         <ImageView
-            android:id="@+id/ivActions"
+            android:id="@+id/ivPlay"
             android:layout_width="62dp"
             android:layout_height="62dp"
             android:layout_weight="1"
@@ -38,8 +37,28 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@android:drawable/ic_media_play" />
-        <!-- app:srcCompat="@android:drawable/checkbox_on_background"-->
-        <!-- app:srcCompat="@android:drawable/checkbox_off_background"-->
+
+        <ImageView
+            android:id="@+id/ivCheck"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
+            app:srcCompat="@android:drawable/checkbox_on_background" />
+
+        <ImageView
+            android:id="@+id/ivUncheck"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
+            app:srcCompat="@android:drawable/checkbox_off_background" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

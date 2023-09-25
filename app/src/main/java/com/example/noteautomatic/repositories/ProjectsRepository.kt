@@ -12,6 +12,16 @@ interface ProjectsRepository {
 
     fun deleteProject(project: Project)
 
+    fun deleteProjects()
+
+    fun selectAllProjects(selected: Boolean?)
+
+    fun selectProjects(project: Project, selected: Boolean)
+
+    fun selectMoreProjects(project: Project): Boolean
+
+    fun isAllSelected(): Boolean
+
     fun addListener(listener: ProjectsListener)
 
     fun removeListener(listener: ProjectsListener)

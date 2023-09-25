@@ -7,7 +7,7 @@ import com.example.noteautomatic.repositories.ProjectsListener
 import com.example.noteautomatic.repositories.ProjectsRepository
 
 class ProjectsListViewModel(
-    private val projectsService: ProjectsRepository
+    private val projectsRepository: ProjectsRepository
 ) : ViewModel() {
 
     private val _projects = MutableLiveData<List<Project>>()
@@ -24,23 +24,31 @@ class ProjectsListViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        projectsService.removeListener(listener)
+        projectsRepository.removeListener(listener)
     }
 
     fun loadProjects() {
-        projectsService.addListener(listener)
+        projectsRepository.addListener(listener)
     }
 
-    fun settingProject(project: Project) {
-        // todo?(settingProject)
+    fun deleteProjects() {
+        projectsRepository.deleteProjects()
     }
 
-    fun deleteProject(project: Project) {
-        projectsService.deleteProject(project)
+    fun selectAllProjects(selected: Boolean?) {
+        projectsRepository.selectAllProjects(selected)
     }
 
-    fun selectProject(project: Project) {
-        // todo(selectProject)
+    fun selectProjects(project: Project, selected: Boolean) {
+        projectsRepository.selectProjects(project, selected)
+    }
+
+    fun selectMoreProject(project: Project) : Boolean {
+        return projectsRepository.selectMoreProjects(project)
+    }
+
+    fun isAllSelected(): Boolean{
+        return projectsRepository.isAllSelected()
     }
 
 }

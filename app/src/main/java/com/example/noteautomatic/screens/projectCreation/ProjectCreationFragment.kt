@@ -27,6 +27,8 @@ class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentProjectCreationBinding.bind(view)
 
+        navigator().onToolbarVisibilityChanged(true)
+
         binding.btnToMenu.setOnClickListener {
             navigator().toMenu()
         }
@@ -35,10 +37,16 @@ class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
             val direction =
                 ProjectCreationFragmentDirections.actionProjectCreationFragmentToProjectRunFragment(
                     projectId =  args.projectId,
-                    projectName = args.projectName ?: ""
+                    projectName = args.projectName
                 )
             navigator().navigateTo(direction)
+
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        navigator().onToolbarVisibilityChanged(true)
     }
 }

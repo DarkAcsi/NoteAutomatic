@@ -3,7 +3,8 @@ package com.example.noteautomatic.screens.projectsList
 data class Project(
     val id: Long,
 //    var position: Long,
-    val name: String
+    val name: String,
+    val selected: Boolean? = null
 )
 
 data class FullProject(
@@ -13,3 +14,4 @@ data class FullProject(
     val timeStart: Long? = null,
     val timePause: Long? = null
 )
+

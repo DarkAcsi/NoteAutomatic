@@ -20,7 +20,7 @@
     <fragment
         android:id="@+id/projectCreationFragment"
         android:name="com.example.noteautomatic.screens.projectCreation.ProjectCreationFragment"
-        android:label="{projectName}"
+        android:label="projectName"
         tools:layout="@layout/fragment_project_creation">
         <action
             android:id="@+id/action_projectCreationFragment_to_projectRunFragment"
@@ -35,7 +35,7 @@
     <fragment
         android:id="@+id/projectRunFragment"
         android:name="com.example.noteautomatic.screens.projectRun.ProjectRunFragment"
-        android:label="{projectName}"
+        android:label="projectName"
         tools:layout="@layout/fragment_project_run">
         <action
             android:id="@+id/action_projectRunFragment_to_projectCreationFragment"
