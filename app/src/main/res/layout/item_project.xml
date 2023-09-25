@@ -38,28 +38,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@android:drawable/ic_media_play" />
 
-        <ImageView
-            android:id="@+id/ivCheck"
-            android:layout_width="62dp"
-            android:layout_height="62dp"
-            android:layout_weight="1"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:visibility="gone"
-            app:srcCompat="@android:drawable/checkbox_on_background" />
-
-        <ImageView
-            android:id="@+id/ivUncheck"
-            android:layout_width="62dp"
-            android:layout_height="62dp"
-            android:layout_weight="1"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:visibility="gone"
-            app:srcCompat="@android:drawable/checkbox_off_background" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
