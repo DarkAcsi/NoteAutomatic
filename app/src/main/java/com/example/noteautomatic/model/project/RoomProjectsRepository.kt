@@ -11,7 +11,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -44,24 +43,21 @@ class RoomProjectsRepository(
         }
     }
 
-    override fun addProject(project: FullProject) {
-        launch {
-            projectDao.insertProject(ProjectEntity.toProjectEntity(project))
-        }
-    }
-
     override fun updateProject(project: FullProject) {
         launch {
             projectDao.updateProject(ProjectEntity.toProjectEntity(project))
+            projects.add(Project(project.id, project.name))
+            notifyChanges()
         }
     }
 
-    override suspend fun getSameNameProject(name: String): Boolean =
+    override suspend fun getNames(name: String): String =
         coroutineScope {
             suspendCancellableCoroutine { continuation ->
                 launch {
-                    val projectName = projectDao.getSameNameProject(name).firstOrNull()
-                    continuation.resume(projectName != null)
+                    projectDao.getNames().collect { nameProject ->
+                        continuation.resume(if (name !in nameProject) name else "")
+                    }
                 }
             }
         }
