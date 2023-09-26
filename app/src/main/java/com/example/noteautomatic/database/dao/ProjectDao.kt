@@ -26,13 +26,10 @@ interface ProjectDao {
     @Update(entity = ProjectEntity::class, onConflict = OnConflictStrategy.REPLACE)
     fun updateProject(project: ProjectEntity)
 
-    @Insert(entity = ProjectEntity::class, onConflict = OnConflictStrategy.REPLACE)
-    fun insertProject(project: ProjectEntity)
-
     @Query("DELETE FROM projects WHERE id IN (:indexes)")
     fun deleteProjects(indexes: List<Long>)
 
-    @Query("SElECT * FROM projects WHERE name = :name")
-    fun getSameNameProject(name: String): Flow<ProjectEntity?>
+    @Query("SElECT name FROM projects")
+    fun getNames(): Flow<List<String>>
 
 }

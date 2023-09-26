@@ -14,11 +14,9 @@ interface ProjectsRepository {
 
     fun deleteProjects()
 
-    fun addProject(project: FullProject)
-
     fun updateProject(project: FullProject)
 
-    suspend fun getSameNameProject(name: String): Boolean
+    suspend fun getNames(name: String): String
 
     // without database
     fun selectAllProjects(selected: Boolean?)
