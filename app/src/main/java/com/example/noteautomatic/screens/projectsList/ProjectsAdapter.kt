@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.noteautomatic.R
 import com.example.noteautomatic.databinding.ItemProjectBinding
+import com.example.noteautomatic.database.classes.Project
 
 interface ProjectActionListener {
 
@@ -109,8 +110,6 @@ class ProjectsAdapter(private val actionListener: ProjectActionListener) :
         with(holder.binding) {
             tvItemProject.text = project.name
             ivPlay.tag = project
-            ivCheck.tag = project
-            ivUncheck.tag = project
             when (project.selected) {
                 true -> {
                     ivPlay.setImageResource(android.R.drawable.checkbox_on_background)

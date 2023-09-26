@@ -3,20 +3,21 @@ package com.example.noteautomatic.screens.projectsList
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.noteautomatic.R
+import com.example.noteautomatic.Repositories
 import com.example.noteautomatic.databinding.FragmentProjectListBinding
-import com.example.noteautomatic.screens.factory
-import com.example.noteautomatic.screens.navigator
+import com.example.noteautomatic.database.classes.Project
+import com.example.noteautomatic.navigator
+import com.example.noteautomatic.viewModelCreator
 
 class ProjectsListFragment : Fragment(R.layout.fragment_project_list) {
 
     private lateinit var binding: FragmentProjectListBinding
     private lateinit var adapter: ProjectsAdapter
 
-    private val viewModel: ProjectsListViewModel by viewModels { factory() }
+    private val viewModel by viewModelCreator { ProjectsListViewModel(Repositories.projectsRepository) }
     private var selected: Boolean = false
     private var selectedAll: Boolean = false
 

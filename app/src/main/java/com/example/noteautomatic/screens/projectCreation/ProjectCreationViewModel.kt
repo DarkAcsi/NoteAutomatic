@@ -3,27 +3,33 @@ package com.example.noteautomatic.screens.projectCreation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.noteautomatic.screens.projectsList.FullProject
-import com.example.noteautomatic.repositories.ProjectNotFoundException
-import com.example.noteautomatic.repositories.ProjectsRepository
+import androidx.lifecycle.viewModelScope
+import com.example.noteautomatic.database.classes.FullProject
+import com.example.noteautomatic.model.ProjectNotFoundException
+import com.example.noteautomatic.model.project.ProjectsRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProjectCreationViewModel(
-    private val projectsService: ProjectsRepository
+    private val projectsRepository: ProjectsRepository
 ) : ViewModel() {
 
-    private val _projectRun = MutableLiveData<FullProject>()
-    val projectRun: LiveData<FullProject> = _projectRun
+    private val _fullProject = MutableLiveData<FullProject>()
+    val fullProject: LiveData<FullProject>? = _fullProject
 
     fun loadProject(projectId: Long) {
-        try {
-            _projectRun.value = projectsService.getById(projectId)
-        } catch (e: ProjectNotFoundException) {
-            e.printStackTrace()
+        if (projectId != 0L) {
+            viewModelScope.launch {
+                withContext(Dispatchers.Main) {
+                    _fullProject.value = projectsRepository.getById(projectId)
+                }
+            }
+        }
+        else {
+            _fullProject.value = FullProject(0, "New Project")
         }
     }
 
-    fun deleteProject() {
-        val projectRun = this.projectRun.value ?: return
-        projectsService.deleteProject(projectRun.project)
-    }
+
 }
