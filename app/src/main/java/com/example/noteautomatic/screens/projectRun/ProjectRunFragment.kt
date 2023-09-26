@@ -3,18 +3,18 @@ package com.example.noteautomatic.screens.projectRun
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.example.noteautomatic.R
+import com.example.noteautomatic.Repositories
 import com.example.noteautomatic.databinding.FragmentProjectRunBinding
-import com.example.noteautomatic.screens.factory
-import com.example.noteautomatic.screens.navigator
+import com.example.noteautomatic.navigator
+import com.example.noteautomatic.viewModelCreator
 
 class ProjectRunFragment : Fragment(R.layout.fragment_project_run) {
 
     private lateinit var binding: FragmentProjectRunBinding
 
-    private val viewModel: ProjectRunViewModel by viewModels { factory() }
+    private val viewModel by viewModelCreator { ProjectRunViewModel(Repositories.projectsRepository) }
 
     private val args: ProjectRunFragmentArgs by navArgs()
 
@@ -31,7 +31,7 @@ class ProjectRunFragment : Fragment(R.layout.fragment_project_run) {
         navigator().onToolbarVisibilityChanged(false)
 
         viewModel.projectRun.observe(viewLifecycleOwner) {
-//            binding.tvNameProject.text = it.project.name
+            binding.tvNameProject.text = it.name
         }
 
 

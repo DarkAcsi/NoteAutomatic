@@ -14,6 +14,7 @@ class MainActivity : AppCompatActivity(), Navigator {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Repositories.init(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -69,7 +70,8 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun toMenu() {
-        navController.popBackStack(R.id.projectsListFragment, false)
+        navController.popBackStack(R.id.projectsListFragment, true)
+        navController.navigate(R.id.projectsListFragment)
     }
 
     override fun onToolbarVisibilityChanged(visible: Boolean) {
