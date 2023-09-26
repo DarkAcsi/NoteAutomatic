@@ -1,7 +1,7 @@
 package com.example.noteautomatic.database.entities
 
+import android.net.Uri
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.noteautomatic.database.classes.FullProject
@@ -15,7 +15,7 @@ data class ProjectEntity(
     @PrimaryKey(autoGenerate = true) val id: Long,
     val name: String,
     val speed: Int,
-    val file: String? = null
+    val file: Uri? = null
 ){
     fun toProject(): Project = Project(
         id = id,

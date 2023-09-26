@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.noteautomatic.R
 import com.example.noteautomatic.Repositories
-import com.example.noteautomatic.databinding.FragmentProjectListBinding
 import com.example.noteautomatic.database.classes.Project
+import com.example.noteautomatic.databinding.FragmentProjectListBinding
 import com.example.noteautomatic.navigator
 import com.example.noteautomatic.viewModelCreator
 
@@ -25,37 +25,67 @@ class ProjectsListFragment : Fragment(R.layout.fragment_project_list) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentProjectListBinding.bind(view)
 
-        navigator().onToolbarVisibilityChanged(false)
-        binding.toolbar.toolbarSelected.visibility = View.INVISIBLE
+        settingPage()
 
-        binding.btnAddProject.setOnClickListener {
-            if (!selected) {
-                val direction =
-                    ProjectsListFragmentDirections.actionProjectsListFragmentToProjectCreationFragment(
-                        projectId = 0,
-                        projectName = ""
-                    )
-                navigator().navigateTo(direction)
-            } else {
+        createRecyclerView()
+
+        with(binding) {
+
+            btnAddProject.setOnClickListener { addNewProject() }
+
+            toolbar.btnCancel.setOnClickListener {
                 stateToolbarButton(false)
                 selected = false
-                viewModel.deleteProjects()
+                viewModel.selectAllProjects(null)
+            }
+
+            toolbar.cbSelectedAll.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    selectedAll = true
+                    viewModel.selectAllProjects(true)
+                }
             }
         }
+    }
 
-        binding.toolbar.btnCancel.setOnClickListener {
+    override fun onResume() {
+        super.onResume()
+        settingPage()
+    }
+
+    private fun settingPage() {
+        navigator().onToolbarVisibilityChanged(false)
+        binding.toolbar.toolbarSelected.visibility = View.INVISIBLE
+    }
+
+    private fun addNewProject() {
+        if (!selected) {
+            val direction =
+                ProjectsListFragmentDirections.actionProjectsListFragmentToProjectCreationFragment(
+                    projectId = 0,
+                    projectName = ""
+                )
+            navigator().navigateTo(direction)
+        } else {
             stateToolbarButton(false)
             selected = false
-            viewModel.selectAllProjects(null)
+            viewModel.deleteProjects()
         }
+    }
 
-        binding.toolbar.cbSelectedAll.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                selectedAll = true
-                viewModel.selectAllProjects(true)
+    private fun stateToolbarButton(select: Boolean) {
+        with(binding) {
+            if (select) {
+                btnAddProject.text = "Delete"
+                toolbar.toolbarSelected.visibility = View.VISIBLE
+            } else {
+                btnAddProject.text = "Add"
+                toolbar.toolbarSelected.visibility = View.GONE
             }
         }
+    }
 
+    private fun createRecyclerView() {
         adapter = ProjectsAdapter(object : ProjectActionListener {
 
             override fun onProjectSetting(project: Project) {
@@ -93,32 +123,17 @@ class ProjectsListFragment : Fragment(R.layout.fragment_project_list) {
             adapter.projects = it
         }
 
-        val layoutManager = LinearLayoutManager(requireContext())
-        layoutManager.reverseLayout = true;
-        layoutManager.stackFromEnd = true;
-        binding.rvProjectList.layoutManager = layoutManager
-        binding.rvProjectList.adapter = adapter
-
-        val itemAnimator = binding.rvProjectList.itemAnimator
-        if (itemAnimator is DefaultItemAnimator) {
-            itemAnimator.supportsChangeAnimations = false
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        navigator().onToolbarVisibilityChanged(false)
-        binding.toolbar.toolbarSelected.visibility = View.GONE
-    }
-
-    private fun stateToolbarButton(select: Boolean) {
         with(binding) {
-            if (select) {
-                btnAddProject.text = "Delete"
-                toolbar.toolbarSelected.visibility = View.VISIBLE
-            } else {
-                btnAddProject.text = "Add"
-                toolbar.toolbarSelected.visibility = View.GONE
+
+            val layoutManager = LinearLayoutManager(requireContext())
+            layoutManager.reverseLayout = true;
+            layoutManager.stackFromEnd = true;
+            rvProjectList.layoutManager = layoutManager
+            rvProjectList.adapter = adapter
+
+            val itemAnimator = rvProjectList.itemAnimator
+            if (itemAnimator is DefaultItemAnimator) {
+                itemAnimator.supportsChangeAnimations = false
             }
         }
     }
