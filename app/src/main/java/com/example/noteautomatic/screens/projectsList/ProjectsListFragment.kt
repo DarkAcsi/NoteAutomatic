@@ -110,12 +110,14 @@ class ProjectsListFragment : Fragment(R.layout.fragment_project_list) {
             }
 
             override fun onProjectPlay(project: Project) {
-                val direction =
-                    ProjectsListFragmentDirections.actionProjectsListFragmentToProjectRunFragment(
-                        projectId = project.id,
-                        projectName = project.name
-                    )
-                navigator().navigateTo(direction)
+                if (project.play) {
+                    val direction =
+                        ProjectsListFragmentDirections.actionProjectsListFragmentToProjectRunFragment(
+                            projectId = project.id,
+                            projectName = project.name
+                        )
+                    navigator().navigateTo(direction)
+                }
             }
         })
 

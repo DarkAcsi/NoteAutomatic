@@ -1,6 +1,7 @@
 package com.example.noteautomatic
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
@@ -80,5 +81,13 @@ class MainActivity : AppCompatActivity(), Navigator {
         } else {
             supportActionBar?.hide()
         }
+    }
+
+    override fun renameToolbar(name: String){
+        binding.toolbar.title = name
+    }
+
+    override fun toast(message: String){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

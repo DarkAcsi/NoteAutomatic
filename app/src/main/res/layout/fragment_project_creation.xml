@@ -28,7 +28,7 @@
         android:id="@+id/btnSave"
         android:layout_width="169dp"
         android:layout_height="62dp"
-        android:text="Button"
+        android:text="Save"
         app:layout_constraintBottom_toTopOf="@+id/btnToRun"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -56,8 +56,9 @@
         android:layout_width="65dp"
         android:layout_height="59dp"
         android:layout_marginTop="20dp"
+        android:autofillHints="100"
         android:ems="10"
-        android:hint="0"
+        android:hint="100"
         android:inputType="numberSigned"
         app:layout_constraintStart_toEndOf="@+id/sbSpeed"
         app:layout_constraintTop_toBottomOf="@+id/rvImages" />
@@ -86,13 +87,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:ems="10"
+        android:hint="Input name"
         android:inputType="text"
         android:minHeight="48dp"
-        android:text="Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Name" />
 
     <TextView
         android:id="@+id/tvNameProject"
@@ -101,11 +103,11 @@
         android:ems="10"
         android:inputType="text"
         android:minHeight="48dp"
-        android:text="Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.372"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Name"/>
 
     <Button
         android:id="@+id/btnRename"
@@ -120,6 +122,8 @@
         android:id="@+id/btnAddFile"
         android:layout_width="176dp"
         android:layout_height="96dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
         android:text="add file"
         app:layout_constraintBottom_toTopOf="@+id/rvImages"
         app:layout_constraintStart_toStartOf="parent" />

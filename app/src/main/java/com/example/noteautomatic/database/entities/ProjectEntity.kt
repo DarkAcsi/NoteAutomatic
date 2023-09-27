@@ -1,6 +1,5 @@
 package com.example.noteautomatic.database.entities
 
-import android.net.Uri
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -12,22 +11,21 @@ import com.example.noteautomatic.database.classes.Project
     indices = [Index(value = ["name"], unique = true)]
 )
 data class ProjectEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
     val speed: Int,
-    val file: Uri? = null
+    val play: Boolean = false,
 ){
     fun toProject(): Project = Project(
         id = id,
         name = name,
-        selected = null
+        play = play,
     )
 
     fun toFullProject(): FullProject = FullProject(
         id = id,
         name = name,
         speed = speed,
-        file = file,
     )
 
     companion object {
@@ -35,7 +33,7 @@ data class ProjectEntity(
             id = project.id,
             name = project.name,
             speed = project.speed,
-            file = project.file
+            play = !project.listImage.isNullOrEmpty()
         )
     }
 }

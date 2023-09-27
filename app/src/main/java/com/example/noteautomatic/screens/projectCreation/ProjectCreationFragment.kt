@@ -23,6 +23,7 @@ class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
     private val viewModel by viewModelCreator { ProjectCreationViewModel(Repositories.projectsRepository) }
 
     private val args: ProjectCreationFragmentArgs by navArgs()
+    private var newProject = true
 
     private var imageUris: MutableList<Uri> = mutableListOf()
     private val pickImages =
@@ -35,7 +36,7 @@ class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
     private val pickFiles =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { documentUri ->
             documentUri?.let { uri ->
-                viewModel.fullProject.value?.file = uri
+//                viewModel.fullProject.value?.file = uri
 
                 val pdfFile = uri.path?.let { File(it) }
                 val pdfDocument = PdfRenderer(ParcelFileDescriptor.open(pdfFile, ParcelFileDescriptor.MODE_READ_ONLY))
@@ -58,18 +59,24 @@ class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentProjectCreationBinding.bind(view)
+        newProject = args.projectId == 0L
+        navigator().onToolbarVisibilityChanged(true)
+        with(binding) {
+            setFieldName(false)
+            viewModel.fullProject.observe(viewLifecycleOwner) {
+                tvNameProject.text = it?.name
+                btnToRun.isEnabled = !it?.listImage.isNullOrEmpty()
+                navigator().renameToolbar(it?.name.toString())
+            }
+        }
 
         settingPage()
 
         with(binding) {
 
-            edNameProject.setOnFocusChangeListener { _, hasFocus -> changeFocus(hasFocus) }
-
             btnRename.setOnClickListener { setFieldName(true) }
 
             btnAddImage.setOnClickListener { pickImage() }
-
-            btnAddFile.setOnClickListener { pickFile() }
 
             btnCancelProject.setOnClickListener { navigator().toMenu() }
 
@@ -88,33 +95,12 @@ class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
     private fun settingPage() {
         navigator().onToolbarVisibilityChanged(true)
         with(binding) {
-            viewModel.fullProject.observe(viewLifecycleOwner) {
-                tvNameProject.text = it.name
-                btnToRun.isEnabled = !it.listImage.isNullOrEmpty()
-                if ((it.file == null) and !it.listImage.isNullOrEmpty()) {
-                    btnAddFile.visibility = View.GONE
-                    btnAddImage.visibility = View.VISIBLE
-                } else if (it.file != null) {
-                    btnAddFile.text = "Delete file"
-                    btnAddFile.visibility = View.VISIBLE
-                    btnAddImage.visibility = View.GONE
-                } else {
-                    btnAddFile.text = "Add file"
-                    btnAddFile.visibility = View.VISIBLE
-                    btnAddImage.visibility = View.VISIBLE
-                }
-            }
-        }
-    }
-
-    private fun changeFocus(hasFocus: Boolean) {
-        if (!hasFocus and !viewModel.newProject) {
-            val name = binding.edNameProject.text.toString()
-            viewModel.setNameProject(name, binding.tvNameProject.text.toString())
-                .observe(viewLifecycleOwner) {
-                    binding.tvNameProject.text = it
-                }
             setFieldName(false)
+            viewModel.fullProject.observe(viewLifecycleOwner) {
+                tvNameProject.text = it?.name
+                btnToRun.isEnabled = !it?.listImage.isNullOrEmpty()
+                navigator().renameToolbar(it?.name.toString())
+            }
         }
     }
 
@@ -125,12 +111,9 @@ class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
                     edNameProject.visibility = View.VISIBLE
                     tvNameProject.visibility = View.INVISIBLE
                     btnRename.visibility = View.INVISIBLE
-                    if (!viewModel.newProject)
-                        edNameProject.requestFocus()
                 }
-
                 false -> {
-                    if (viewModel.newProject)
+                    if (newProject)
                         setFieldName(true)
                     else {
                         edNameProject.visibility = View.INVISIBLE
@@ -149,7 +132,6 @@ class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
         }
         pickImages.launch(intent.toString())
     }
-
     private fun pickFile() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             type = "application/pdf"
@@ -159,27 +141,30 @@ class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
     }
 
     private fun saveProjectChange() {
+        val speed = binding.edSpeed.text.toString().ifEmpty { binding.edSpeed.hint.toString() }
+
         var name = binding.tvNameProject.text.toString()
-        val speed = binding.edSpeed.text.toString().toInt()
-        if (viewModel.newProject)
-            viewModel.setNameProject(binding.edNameProject.text.toString(), "")
-                .observe(viewLifecycleOwner) {
-                    if (it.isEmpty()) binding.edNameProject.hint = "Input name"
-                    else {
-                        name = it
-                        viewModel.newProject = false
-                        setFieldName(false)
-                    }
-                }
-        viewModel.save(name, speed)
+        val projectName = viewModel.setNameProject(binding.edNameProject.text.toString(), name, newProject)
+        if (projectName.isBlank()) {
+            if (newProject)
+                return
+        }
+        name = projectName
+        if (viewModel.save(name, speed.toInt(), newProject) == null)
+            navigator().toMenu()
+        settingPage()
     }
 
     private fun runProject() {
-        val direction =
-            ProjectCreationFragmentDirections.actionProjectCreationFragmentToProjectRunFragment(
-                projectId = args.projectId,
-                projectName = args.projectName
-            )
-        navigator().navigateTo(direction)
+        viewModel.fullProject.value?.let {
+            val projectId = it.id
+            val projectName = it.name
+            val direction =
+                ProjectCreationFragmentDirections.actionProjectCreationFragmentToProjectRunFragment(
+                    projectId = projectId,
+                    projectName = projectName
+                )
+            navigator().navigateTo(direction)
+        }
     }
 }

@@ -9,7 +9,7 @@ import com.example.noteautomatic.database.entities.ImageEntity
 import com.example.noteautomatic.database.entities.ProjectEntity
 
 @Database(
-    version = 1,
+    version = 3,
     entities = [
         ProjectEntity::class,
         ImageEntity::class

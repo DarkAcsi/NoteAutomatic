@@ -16,8 +16,10 @@
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/btnAddProject"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="1.0"
         tools:itemCount="40"
         tools:listitem="@layout/item_project" />
 

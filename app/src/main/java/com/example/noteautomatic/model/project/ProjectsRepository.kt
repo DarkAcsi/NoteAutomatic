@@ -2,6 +2,7 @@ package com.example.noteautomatic.model.project
 
 import com.example.noteautomatic.database.classes.FullProject
 import com.example.noteautomatic.database.classes.Project
+import com.example.noteautomatic.database.entities.ProjectEntity
 
 typealias ProjectsListener = (projects: List<Project>) -> Unit
 
@@ -14,9 +15,9 @@ interface ProjectsRepository {
 
     fun deleteProjects()
 
-    fun updateProject(project: FullProject)
+    fun updateProject(project: ProjectEntity)
 
-    suspend fun getNames(name: String): String
+    fun getNames(name: String, id: Long): String
 
     // without database
     fun selectAllProjects(selected: Boolean?)
@@ -29,5 +30,4 @@ interface ProjectsRepository {
     fun addListener(listener: ProjectsListener)
 
     fun removeListener(listener: ProjectsListener)
-
 }

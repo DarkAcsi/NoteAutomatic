@@ -1,15 +1,14 @@
 package com.example.noteautomatic.screens.projectsList
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.noteautomatic.R
-import com.example.noteautomatic.databinding.ItemProjectBinding
 import com.example.noteautomatic.database.classes.Project
+import com.example.noteautomatic.databinding.ItemProjectBinding
 
 interface ProjectActionListener {
 
@@ -60,21 +59,17 @@ class ProjectsAdapter(private val actionListener: ProjectActionListener) :
         when (v.id) {
             R.id.ivPlay -> {
                 if (!selected) {
-                    Log.d("adapte", "onProjectPlay")
                     actionListener.onProjectPlay(project)
                 }
                 else {
                     selected = actionListener.onProjectSelectMore(project)
-                    Log.d("adapte","onProjectSelectMore $selected")
                 }
             }
             else -> {
                 if (!selected) {
-                    Log.d("adapte", "onProjectSetting")
                     actionListener.onProjectSetting(project)
                 } else {
                     selected = actionListener.onProjectSelectMore(project)
-                    Log.d("adapte","onProjectSelectMore $selected")
                 }
             }
         }

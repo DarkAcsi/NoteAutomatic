@@ -5,10 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.noteautomatic.database.classes.FullProject
+import com.example.noteautomatic.database.entities.ProjectEntity
 import com.example.noteautomatic.model.project.ProjectsRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ProjectCreationViewModel(
     private val projectsRepository: ProjectsRepository
@@ -16,46 +15,52 @@ class ProjectCreationViewModel(
 
     private val _fullProject = MutableLiveData<FullProject>()
     val fullProject: LiveData<FullProject> = _fullProject
+    private var projectId: Long = 0L
 
-    var newProject = false
-
-    fun loadProject(projectId: Long) {
-        if (projectId != 0L) {
-            viewModelScope.launch {
-                withContext(Dispatchers.Main) {
-                    _fullProject.value = projectsRepository.getById(projectId)
-                }
+    fun loadProject(id: Long) {
+        projectId = id
+        viewModelScope.launch {
+            if (projectId != 0L) {
+                _fullProject.postValue(projectsRepository.getById(projectId))
+            } else {
+                _fullProject.postValue(FullProject(0, ""))
             }
-        } else {
-            _fullProject.value = FullProject(0, "New Project")
-            newProject = true
         }
     }
 
-    fun setNameProject(name: String, previousName: String): LiveData<String> {
-        val result = MutableLiveData<String>()
-        if (name.isEmpty()) {
-            result.value = if (newProject) "" else previousName
+    fun setNameProject(nameEditText: String, nameTextView: String, newProject: Boolean): String {
+        return if (nameEditText.isEmpty()) {
+            if (newProject) "" else nameTextView
         } else {
-            viewModelScope.launch {
-                result.postValue(
-                    if (projectsRepository.getNames(name).isEmpty()) previousName else name
-                )
-            }
+            if (projectsRepository.getNames(nameEditText, _fullProject.value?.id ?: -1)
+                    .isBlank()
+            ) nameTextView else nameEditText
         }
-        return result
     }
 
-    fun save(name: String, speed: Int) : FullProject{
-        val project =  FullProject(
-            id = fullProject.value?.id ?: 0,
+    fun save(name: String, speed: Int, newProject: Boolean): FullProject? {
+        val fullProjectBase: FullProject = fullProject.value ?: FullProject(0, "")
+        if (newProject){
+            val project = ProjectEntity(
+                id = 0,
+                name = name,
+                speed = speed,
+                play = !fullProjectBase.listImage.isNullOrEmpty()
+            )
+            viewModelScope.launch {
+                projectsRepository.updateProject(project)
+            }
+            return null
+        }
+        val project = FullProject(
+            id = fullProjectBase.id,
             name = name,
             speed = speed,
-            file = fullProject.value?.file,
-            listImage = fullProject.value?.listImage
+            listImage = fullProjectBase.listImage
         )
-        viewModelScope.launch{
-            projectsRepository.updateProject(project)
+        _fullProject.postValue(project)
+        viewModelScope.launch {
+            projectsRepository.updateProject(ProjectEntity.toProjectEntity(project))
         }
         return project
     }

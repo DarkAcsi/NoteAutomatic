@@ -10,12 +10,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.resume
 
 class RoomProjectsRepository(
     private val projectDao: ProjectDao,
@@ -43,43 +40,46 @@ class RoomProjectsRepository(
         }
     }
 
-    override fun updateProject(project: FullProject) {
+    override fun updateProject(project: ProjectEntity) {
         launch {
-            projectDao.updateProject(ProjectEntity.toProjectEntity(project))
-            projects.add(Project(project.id, project.name))
-            notifyChanges()
+            projectDao.insertOrUpdateProject(project)
+            if (project.id == 0L) {
+                projectDao.getAllProjects().collect { projectsFromDatabase ->
+                    projects = if (projectsFromDatabase.isEmpty()) mutableListOf()
+                    else projectsFromDatabase.toMutableList()
+                    notifyChanges()
+                }
+                val index = projects.indexOfFirst { it.id == project.id }
+                if (index != -1)
+                    projects[index] = Project(project.id, project.name)
+                notifyChanges()
+            }
         }
     }
 
-    override suspend fun getNames(name: String): String =
-        coroutineScope {
-            suspendCancellableCoroutine { continuation ->
-                launch {
-                    projectDao.getNames().collect { nameProject ->
-                        continuation.resume(if (name !in nameProject) name else "")
-                    }
-                }
-            }
-        }
+    override fun getNames(name: String, id: Long): String {
+        val index = projects.indexOfFirst { it.name == name }
+        return if ((index == -1) or (index.toLong() == id))
+            name else ""
+    }
 
-    override suspend fun getById(id: Long): FullProject? =
-        coroutineScope {
-            suspendCancellableCoroutine { continuation ->
-                launch {
-                    val project =
-                        projects.firstOrNull { it.id == id } ?: throw ProjectNotFoundException()
-                    try {
-                        val fullProject = projectDao.getFullProject(project.id)!!.toFullProject()
-                        imageDao.getAllImages(id).collect {
-                            fullProject.listImage = it
-                        }
-                        continuation.resume(fullProject)
-                    } catch (e: NullPointerException) {
-                        continuation.resume(null)
-                    }
+    override suspend fun getById(id: Long): FullProject? = withContext(Dispatchers.IO) {
+        try {
+            val project =
+                projects.firstOrNull { it.id == id } ?: throw ProjectNotFoundException()
+            val fullProject = projectDao.getFullProject(id)?.toFullProject()
+
+            if (fullProject != null) {
+                imageDao.getAllImages(id).collect {
+                    fullProject.listImage = it
                 }
             }
+            return@withContext fullProject
+        } catch (e: Exception) {
+            null
         }
+    }
+
 
     override fun deleteProject(id: Long) {
         launch {
