@@ -2,14 +2,14 @@ package com.example.noteautomatic.screens.projectsList
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.noteautomatic.database.classes.Project
+import com.example.noteautomatic.foundation.base.BaseViewModel
 import com.example.noteautomatic.model.project.ProjectsListener
 import com.example.noteautomatic.model.project.ProjectsRepository
 
 class ProjectsListViewModel(
     private val projectsRepository: ProjectsRepository
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _projects = MutableLiveData<List<Project>>()
     val projects: LiveData<List<Project>> = _projects
@@ -47,6 +47,5 @@ class ProjectsListViewModel(
     fun selectMoreProject(project: Project) : Boolean {
         return projectsRepository.selectMoreProjects(project)
     }
-
 
 }

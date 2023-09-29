@@ -5,7 +5,7 @@ import com.example.noteautomatic.database.classes.Project
 import com.example.noteautomatic.database.dao.ImageDao
 import com.example.noteautomatic.database.dao.ProjectDao
 import com.example.noteautomatic.database.entities.ProjectEntity
-import com.example.noteautomatic.model.ProjectNotFoundException
+import com.example.noteautomatic.foundation.ProjectNotFoundException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

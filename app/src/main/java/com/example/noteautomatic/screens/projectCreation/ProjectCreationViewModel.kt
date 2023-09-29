@@ -2,16 +2,16 @@ package com.example.noteautomatic.screens.projectCreation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.noteautomatic.database.classes.FullProject
 import com.example.noteautomatic.database.entities.ProjectEntity
+import com.example.noteautomatic.foundation.base.BaseViewModel
 import com.example.noteautomatic.model.project.ProjectsRepository
 import kotlinx.coroutines.launch
 
 class ProjectCreationViewModel(
     private val projectsRepository: ProjectsRepository
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _fullProject = MutableLiveData<FullProject>()
     val fullProject: LiveData<FullProject> = _fullProject

@@ -1,3 +1,3 @@
-package com.example.noteautomatic.model
+package com.example.noteautomatic.foundation
 
 class ProjectNotFoundException : Exception()

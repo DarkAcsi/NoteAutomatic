@@ -2,10 +2,9 @@ package com.example.noteautomatic.screens.projectRun
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.noteautomatic.database.classes.FullProject
-import com.example.noteautomatic.model.ProjectNotFoundException
+import com.example.noteautomatic.foundation.base.BaseViewModel
 import com.example.noteautomatic.model.project.ProjectsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -13,7 +12,7 @@ import kotlinx.coroutines.withContext
 
 class ProjectRunViewModel(
     private val projectsRepository: ProjectsRepository
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _projectRun = MutableLiveData<FullProject>()
     val projectRun: LiveData<FullProject> = _projectRun

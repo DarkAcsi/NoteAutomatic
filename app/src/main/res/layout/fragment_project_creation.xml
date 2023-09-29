@@ -10,6 +10,7 @@
         android:id="@+id/btnToRun"
         android:layout_width="375dp"
         android:layout_height="57dp"
+        android:layout_marginBottom="15dp"
         android:layout_weight="1"
         android:text="run"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -20,6 +21,8 @@
         android:id="@+id/btnCancelProject"
         android:layout_width="153dp"
         android:layout_height="58dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginBottom="15dp"
         android:text="Cancel"
         app:layout_constraintBottom_toTopOf="@+id/btnToRun"
         app:layout_constraintStart_toStartOf="parent" />
@@ -28,6 +31,8 @@
         android:id="@+id/btnSave"
         android:layout_width="169dp"
         android:layout_height="62dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="15dp"
         android:text="Save"
         app:layout_constraintBottom_toTopOf="@+id/btnToRun"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -38,8 +43,10 @@
         android:layout_height="28dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="28dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnCancelProject"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rvImages" />
+        app:layout_constraintTop_toBottomOf="@+id/rvImages"
+        app:layout_constraintVertical_bias="0.041" />
 
     <TextView
         android:id="@+id/textView"
@@ -60,6 +67,7 @@
         android:ems="10"
         android:hint="100"
         android:inputType="numberSigned"
+        app:layout_constraintBottom_toTopOf="@+id/btnSave"
         app:layout_constraintStart_toEndOf="@+id/sbSpeed"
         app:layout_constraintTop_toBottomOf="@+id/rvImages" />
 
@@ -67,7 +75,7 @@
         android:id="@+id/rvImages"
         android:layout_width="379dp"
         android:layout_height="193dp"
-        android:layout_marginBottom="192dp"
+        android:layout_marginBottom="152dp"
         app:layout_constraintBottom_toTopOf="@+id/btnToRun"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.562"
@@ -75,17 +83,18 @@
 
     <Button
         android:id="@+id/btnAddImage"
-        android:layout_width="189dp"
+        android:layout_width="180dp"
         android:layout_height="115dp"
+        android:layout_marginEnd="16dp"
         android:text="add image"
         app:layout_constraintBottom_toTopOf="@+id/rvImages"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
         android:id="@+id/edNameProject"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="52dp"
         android:ems="10"
         android:hint="Input name"
         android:inputType="text"
@@ -98,34 +107,36 @@
 
     <TextView
         android:id="@+id/tvNameProject"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="204dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="52dp"
         android:ems="10"
         android:inputType="text"
         android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.372"
+        app:layout_constraintHorizontal_bias="0.405"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Name"/>
+        tools:text="Name" />
 
     <Button
         android:id="@+id/btnRename"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="80dp"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="32dp"
         android:text="rename"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnAddFile"
-        android:layout_width="176dp"
-        android:layout_height="96dp"
+        android:layout_width="180dp"
+        android:layout_height="115dp"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
         android:text="add file"
         app:layout_constraintBottom_toTopOf="@+id/rvImages"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvNameProject" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

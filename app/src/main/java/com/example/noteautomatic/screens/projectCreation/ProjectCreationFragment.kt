@@ -1,12 +1,7 @@
 package com.example.noteautomatic.screens.projectCreation
 
-import android.content.Intent
-import android.graphics.pdf.PdfRenderer
-import android.net.Uri
 import android.os.Bundle
-import android.os.ParcelFileDescriptor
 import android.view.View
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.example.noteautomatic.R
@@ -14,7 +9,6 @@ import com.example.noteautomatic.Repositories
 import com.example.noteautomatic.databinding.FragmentProjectCreationBinding
 import com.example.noteautomatic.navigator
 import com.example.noteautomatic.viewModelCreator
-import java.io.File
 
 class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
 
@@ -24,32 +18,7 @@ class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
 
     private val args: ProjectCreationFragmentArgs by navArgs()
     private var newProject = true
-
-    private var imageUris: MutableList<Uri> = mutableListOf()
-    private val pickImages =
-        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
-            imageUris.clear()
-            imageUris.addAll(uris)
-        }
-
-    private var pagesUris: MutableList<Uri> = mutableListOf()
-    private val pickFiles =
-        registerForActivityResult(ActivityResultContracts.OpenDocument()) { documentUri ->
-            documentUri?.let { uri ->
-//                viewModel.fullProject.value?.file = uri
-
-                val pdfFile = uri.path?.let { File(it) }
-                val pdfDocument = PdfRenderer(ParcelFileDescriptor.open(pdfFile, ParcelFileDescriptor.MODE_READ_ONLY))
-                val pageCount = pdfDocument.pageCount
-                for (i in 0 until pageCount) {
-                    val page = pdfDocument.openPage(i)
-                    val link = Uri.parse("file://${pdfFile?.absolutePath}#page=${i + 1}")
-                    pagesUris.add(link)
-                    page.close()
-                }
-                pdfDocument.close()
-            }
-        }
+        get() {return args.projectId == 0L}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +45,7 @@ class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
 
             btnRename.setOnClickListener { setFieldName(true) }
 
-            btnAddImage.setOnClickListener { pickImage() }
+            btnAddImage.setOnClickListener { /*pickImage()*/ }
 
             btnCancelProject.setOnClickListener { navigator().toMenu() }
 
@@ -123,21 +92,6 @@ class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
                 }
             }
         }
-    }
-
-    private fun pickImage() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-            type = "image/*"
-            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        }
-        pickImages.launch(intent.toString())
-    }
-    private fun pickFile() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            type = "application/pdf"
-            addCategory(Intent.CATEGORY_OPENABLE)
-        }
-        pickFiles.launch(arrayOf(intent.toString()))
     }
 
     private fun saveProjectChange() {
