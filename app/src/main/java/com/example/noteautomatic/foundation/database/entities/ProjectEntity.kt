@@ -1,10 +1,10 @@
-package com.example.noteautomatic.database.entities
+package com.example.noteautomatic.foundation.database.entities
 
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.example.noteautomatic.database.classes.FullProject
-import com.example.noteautomatic.database.classes.Project
+import com.example.noteautomatic.foundation.classes.FullProject
+import com.example.noteautomatic.foundation.classes.Project
 
 @Entity(
     tableName = "projects",
@@ -15,7 +15,7 @@ data class ProjectEntity(
     val name: String,
     val speed: Int,
     val play: Boolean = false,
-){
+) {
     fun toProject(): Project = Project(
         id = id,
         name = name,
@@ -32,6 +32,13 @@ data class ProjectEntity(
         fun toProjectEntity(project: FullProject): ProjectEntity = ProjectEntity(
             id = project.id,
             name = project.name,
+            speed = project.speed,
+            play = !project.listImage.isNullOrEmpty()
+        )
+
+        fun toProjectEntity(project: FullProject, name: String): ProjectEntity = ProjectEntity(
+            id = project.id,
+            name = name,
             speed = project.speed,
             play = !project.listImage.isNullOrEmpty()
         )

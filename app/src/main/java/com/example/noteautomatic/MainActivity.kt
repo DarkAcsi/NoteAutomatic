@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import com.example.noteautomatic.databinding.ActivityMainBinding
+import com.example.noteautomatic.foundation.Navigator
 
 class MainActivity : AppCompatActivity(), Navigator {
 
@@ -21,7 +22,8 @@ class MainActivity : AppCompatActivity(), Navigator {
 
         setSupportActionBar(binding.toolbar)
 
-        val navHost = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+        val navHost =
+            supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         navController = navHost.navController
 
         navController.addOnDestinationChangedListener { _, destination, arguments ->
@@ -30,6 +32,7 @@ class MainActivity : AppCompatActivity(), Navigator {
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
                     binding.toolbar.title = ""
                 }
+
                 R.id.projectCreationFragment -> {
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
                     arguments?.let {
@@ -37,6 +40,7 @@ class MainActivity : AppCompatActivity(), Navigator {
                         binding.toolbar.title = projectName
                     }
                 }
+
                 R.id.projectRunFragment -> {
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
                     arguments?.let {
@@ -48,7 +52,7 @@ class MainActivity : AppCompatActivity(), Navigator {
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean{
+    override fun onSupportNavigateUp(): Boolean {
         val currentDestination = navController.currentDestination?.id
         if (currentDestination == R.id.projectCreationFragment) {
             toMenu()
@@ -83,11 +87,11 @@ class MainActivity : AppCompatActivity(), Navigator {
         }
     }
 
-    override fun renameToolbar(name: String){
+    override fun renameToolbar(name: String) {
         binding.toolbar.title = name
     }
 
-    override fun toast(message: String){
+    override fun toast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

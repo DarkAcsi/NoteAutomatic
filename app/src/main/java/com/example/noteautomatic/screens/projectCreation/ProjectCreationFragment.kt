@@ -2,23 +2,24 @@ package com.example.noteautomatic.screens.projectCreation
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.example.noteautomatic.R
 import com.example.noteautomatic.Repositories
 import com.example.noteautomatic.databinding.FragmentProjectCreationBinding
-import com.example.noteautomatic.navigator
-import com.example.noteautomatic.viewModelCreator
+import com.example.noteautomatic.foundation.base.BaseFragment
+import com.example.noteautomatic.foundation.classes.FullProject
+import com.example.noteautomatic.foundation.navigator
+import com.example.noteautomatic.foundation.viewModelCreator
+import com.example.noteautomatic.screens.renderSimpleResult
 
-class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
+class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation) {
 
     private lateinit var binding: FragmentProjectCreationBinding
 
-    private val viewModel by viewModelCreator { ProjectCreationViewModel(Repositories.projectsRepository) }
+    override val viewModel by viewModelCreator { ProjectCreationViewModel(Repositories.projectsRepository) }
 
     private val args: ProjectCreationFragmentArgs by navArgs()
-    private var newProject = true
-        get() {return args.projectId == 0L}
+    private var newProject = FullProject(0, "")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,20 +29,37 @@ class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentProjectCreationBinding.bind(view)
-        newProject = args.projectId == 0L
         navigator().onToolbarVisibilityChanged(true)
         with(binding) {
             setFieldName(false)
+            viewModel.fullProject.observe(viewLifecycleOwner) { result ->
+                renderSimpleResult(binding.root, result) {
+                        if (it == null) {
+                            navigator().toMenu()
+                            navigator().toast("Couldn't find the project")
+                        } else {
+                            newProject = it
+                            btnToRun.isEnabled = (it.listImage.isNullOrEmpty()) and (it.id != 0L)
+                            if (it.id == 0L) {
+                                tvNameProject.text = ""
+                                edNameProject.hint = it.name
+                                navigator().renameToolbar(it.name)
+                            } else {
+                                tvNameProject.text = it.name
+                                navigator().renameToolbar(it.name)
+                            }
+                        }
+                    }
+            }
             viewModel.fullProject.observe(viewLifecycleOwner) {
-                tvNameProject.text = it?.name
-                btnToRun.isEnabled = !it?.listImage.isNullOrEmpty()
-                navigator().renameToolbar(it?.name.toString())
             }
         }
 
         settingPage()
 
         with(binding) {
+
+            edNameProject.setOnFocusChangeListener { _, hasFocus -> changeFocus(hasFocus) }
 
             btnRename.setOnClickListener { setFieldName(true) }
 
@@ -63,14 +81,7 @@ class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
 
     private fun settingPage() {
         navigator().onToolbarVisibilityChanged(true)
-        with(binding) {
-            setFieldName(false)
-            viewModel.fullProject.observe(viewLifecycleOwner) {
-                tvNameProject.text = it?.name
-                btnToRun.isEnabled = !it?.listImage.isNullOrEmpty()
-                navigator().renameToolbar(it?.name.toString())
-            }
-        }
+        setFieldName(false)
     }
 
     private fun setFieldName(changed: Boolean) {
@@ -82,7 +93,7 @@ class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
                     btnRename.visibility = View.INVISIBLE
                 }
                 false -> {
-                    if (newProject)
+                    if (newProject.id  == 0L)
                         setFieldName(true)
                     else {
                         edNameProject.visibility = View.INVISIBLE
@@ -94,31 +105,50 @@ class ProjectCreationFragment : Fragment(R.layout.fragment_project_creation) {
         }
     }
 
-    private fun saveProjectChange() {
-        val speed = binding.edSpeed.text.toString().ifEmpty { binding.edSpeed.hint.toString() }
-
-        var name = binding.tvNameProject.text.toString()
-        val projectName = viewModel.setNameProject(binding.edNameProject.text.toString(), name, newProject)
-        if (projectName.isBlank()) {
-            if (newProject)
-                return
+    private fun changeFocus(hasFocus: Boolean) {
+        if ((!hasFocus) and (newProject.id != 0L)) {
+            setFieldName(false)
         }
-        name = projectName
-        if (viewModel.save(name, speed.toInt(), newProject) == null)
-            navigator().toMenu()
-        settingPage()
+    }
+
+    private fun blockUI(){
+        with(binding) {
+            edNameProject.isEnabled = false
+            btnRename.isEnabled = false
+            btnAddImage.isEnabled = false
+            btnSave.isEnabled = false
+            btnToRun.isEnabled = false
+
+            saveProgressBar.visibility = View.VISIBLE
+        }
+    }
+
+    private fun unblockUI(){
+        with(binding) {
+            edNameProject.isEnabled = true
+            btnRename.isEnabled = true
+            btnAddImage.isEnabled = true
+            btnSave.isEnabled = true
+            btnToRun.isEnabled = true
+
+            saveProgressBar.visibility = View.GONE
+        }
+    }
+
+    private fun saveProjectChange() {
+        var nameEd = binding.edNameProject.text.toString().trim()
+        var nameTv = binding.tvNameProject.text.toString().trim()
+        val speed = binding.edSpeed.text.toString().ifEmpty { binding.edSpeed.hint.toString() }
+        viewModel.save(nameEd, nameTv, speed.toInt(), newProject)
+        setFieldName(newProject.id == 0L)
     }
 
     private fun runProject() {
-        viewModel.fullProject.value?.let {
-            val projectId = it.id
-            val projectName = it.name
-            val direction =
-                ProjectCreationFragmentDirections.actionProjectCreationFragmentToProjectRunFragment(
-                    projectId = projectId,
-                    projectName = projectName
-                )
-            navigator().navigateTo(direction)
-        }
+        val direction =
+            ProjectCreationFragmentDirections.actionProjectCreationFragmentToProjectRunFragment(
+                projectId = newProject.id,
+                projectName = newProject.name
+            )
+        navigator().navigateTo(direction)
     }
 }

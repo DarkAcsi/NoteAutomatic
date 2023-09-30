@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.noteautomatic.R
-import com.example.noteautomatic.database.classes.Project
 import com.example.noteautomatic.databinding.ItemProjectBinding
+import com.example.noteautomatic.foundation.classes.Project
 
 interface ProjectActionListener {
 
@@ -60,11 +60,11 @@ class ProjectsAdapter(private val actionListener: ProjectActionListener) :
             R.id.ivPlay -> {
                 if (!selected) {
                     actionListener.onProjectPlay(project)
-                }
-                else {
+                } else {
                     selected = actionListener.onProjectSelectMore(project)
                 }
             }
+
             else -> {
                 if (!selected) {
                     actionListener.onProjectSetting(project)

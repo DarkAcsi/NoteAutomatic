@@ -1,4 +1,4 @@
-package com.example.noteautomatic
+package com.example.noteautomatic.foundation
 
 import android.os.Bundle
 import androidx.navigation.NavDirections

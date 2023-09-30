@@ -2,22 +2,24 @@ package com.example.noteautomatic.screens.projectsList
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.noteautomatic.R
 import com.example.noteautomatic.Repositories
-import com.example.noteautomatic.database.classes.Project
 import com.example.noteautomatic.databinding.FragmentProjectListBinding
-import com.example.noteautomatic.navigator
-import com.example.noteautomatic.viewModelCreator
+import com.example.noteautomatic.foundation.base.BaseFragment
+import com.example.noteautomatic.foundation.classes.Project
+import com.example.noteautomatic.foundation.navigator
+import com.example.noteautomatic.foundation.viewModelCreator
+import com.example.noteautomatic.screens.onTryAgain
+import com.example.noteautomatic.screens.renderSimpleResult
 
-class ProjectsListFragment : Fragment(R.layout.fragment_project_list) {
+class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
 
     private lateinit var binding: FragmentProjectListBinding
     private lateinit var adapter: ProjectsAdapter
 
-    private val viewModel by viewModelCreator { ProjectsListViewModel(Repositories.projectsRepository) }
+    override val viewModel by viewModelCreator { ProjectsListViewModel(Repositories.projectsRepository) }
     private var selected: Boolean = false
     private var selectedAll: Boolean = false
 
@@ -26,10 +28,25 @@ class ProjectsListFragment : Fragment(R.layout.fragment_project_list) {
         binding = FragmentProjectListBinding.bind(view)
 
         settingPage()
-
         createRecyclerView()
 
         with(binding) {
+
+            viewModel.projects.observe(viewLifecycleOwner) { result ->
+                renderSimpleResult(
+                    root = root,
+                    result = result,
+                    onSuccess = {
+                        if (it.isEmpty()) ivEmptyList.visibility = View.VISIBLE
+                        else rvProjectList.visibility = View.VISIBLE
+                        adapter.projects = it
+                    }
+                )
+            }
+            btnAddProject.visibility = View.VISIBLE
+            onTryAgain(root) {
+                viewModel.tryAgain()
+            }
 
             btnAddProject.setOnClickListener { addNewProject() }
 
@@ -120,10 +137,6 @@ class ProjectsListFragment : Fragment(R.layout.fragment_project_list) {
                 }
             }
         })
-
-        viewModel.projects.observe(viewLifecycleOwner) {
-            adapter.projects = it
-        }
 
         with(binding) {
 

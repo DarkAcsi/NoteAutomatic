@@ -2,11 +2,11 @@ package com.example.noteautomatic
 
 import android.content.Context
 import androidx.room.Room
-import com.example.noteautomatic.database.AppDatabase
-import com.example.noteautomatic.model.image.ImagesRepository
-import com.example.noteautomatic.model.image.RoomImagesRepository
-import com.example.noteautomatic.model.project.ProjectsRepository
-import com.example.noteautomatic.model.project.RoomProjectsRepository
+import com.example.noteautomatic.foundation.database.AppDatabase
+import com.example.noteautomatic.foundation.model.image.ImagesRepository
+import com.example.noteautomatic.foundation.model.image.RoomImagesRepository
+import com.example.noteautomatic.foundation.model.project.ProjectsRepository
+import com.example.noteautomatic.foundation.model.project.RoomProjectsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 

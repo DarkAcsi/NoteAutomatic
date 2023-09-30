@@ -1,4 +1,4 @@
-package com.example.noteautomatic.database.classes
+package com.example.noteautomatic.foundation.classes
 
 import android.net.Uri
 import androidx.room.ColumnInfo

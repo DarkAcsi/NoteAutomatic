@@ -19,10 +19,10 @@
 
     <Button
         android:id="@+id/btnCancelProject"
-        android:layout_width="153dp"
-        android:layout_height="58dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginBottom="15dp"
+        android:layout_width="160dp"
+        android:layout_height="59dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="12dp"
         android:text="Cancel"
         app:layout_constraintBottom_toTopOf="@+id/btnToRun"
         app:layout_constraintStart_toStartOf="parent" />
@@ -31,8 +31,8 @@
         android:id="@+id/btnSave"
         android:layout_width="169dp"
         android:layout_height="62dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="15dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
         android:text="Save"
         app:layout_constraintBottom_toTopOf="@+id/btnToRun"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -138,5 +138,20 @@
         app:layout_constraintBottom_toTopOf="@+id/rvImages"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvNameProject" />
+
+    <include
+        layout = "@layout/part_result"
+        android:visibility="gone"
+        tools:visibility="gone"/>
+
+    <ProgressBar
+        android:id="@+id/saveProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/btnSave"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btnSave" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

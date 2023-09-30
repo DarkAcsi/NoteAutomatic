@@ -1,4 +1,4 @@
-package com.example.noteautomatic
+package com.example.noteautomatic.foundation
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels

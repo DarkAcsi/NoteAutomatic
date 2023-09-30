@@ -1,11 +1,11 @@
-package com.example.noteautomatic.model.project
+package com.example.noteautomatic.foundation.model.project
 
-import com.example.noteautomatic.database.classes.FullProject
-import com.example.noteautomatic.database.classes.Project
-import com.example.noteautomatic.database.dao.ImageDao
-import com.example.noteautomatic.database.dao.ProjectDao
-import com.example.noteautomatic.database.entities.ProjectEntity
-import com.example.noteautomatic.foundation.ProjectNotFoundException
+import com.example.noteautomatic.foundation.classes.FullProject
+import com.example.noteautomatic.foundation.classes.Project
+import com.example.noteautomatic.foundation.database.dao.ImageDao
+import com.example.noteautomatic.foundation.database.dao.ProjectDao
+import com.example.noteautomatic.foundation.database.entities.ProjectEntity
+import com.example.noteautomatic.foundation.model.ProjectNotFoundException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,31 +40,33 @@ class RoomProjectsRepository(
         }
     }
 
-    override fun updateProject(project: ProjectEntity) {
-        launch {
-            projectDao.insertOrUpdateProject(project)
-            if (project.id == 0L) {
-                projectDao.getAllProjects().collect { projectsFromDatabase ->
-                    projects = if (projectsFromDatabase.isEmpty()) mutableListOf()
-                    else projectsFromDatabase.toMutableList()
-                    notifyChanges()
-                }
-                val index = projects.indexOfFirst { it.id == project.id }
-                if (index != -1)
-                    projects[index] = Project(project.id, project.name)
-                notifyChanges()
+    override suspend fun updateProject(project: ProjectEntity): ProjectEntity {
+        val projectEntity = projectDao.insertOrUpdateProject(project)
+        if (project.id == 0L) {
+            projectDao.getAllProjects().collect { projectsFromDatabase ->
+                projects = if (projectsFromDatabase.isEmpty()) mutableListOf()
+                else projectsFromDatabase.toMutableList()
+//                notifyChanges()
             }
         }
+        val index = projects.indexOfFirst { it.id == project.id }
+        if (index != -1)
+            projects[index] = Project(project.id, project.name)
+//        notifyChanges()
+        return projectEntity
     }
 
-    override fun getNames(name: String, id: Long): String {
-        val index = projects.indexOfFirst { it.name == name }
-        return if ((index == -1) or (index.toLong() == id))
-            name else ""
+    override suspend fun getNames(name: String, id: Long): Boolean {
+        val names = projectDao.getNames()
+        val cnt: Int = names?.count { it == name } ?: 0
+        val projectId = projects.firstOrNull { it.id == id }?.id ?: 0
+        if ((cnt == 0) or (projectId == id))
+            return true
+        return false
     }
 
-    override suspend fun getById(id: Long): FullProject? = withContext(Dispatchers.IO) {
-        try {
+    override suspend fun getById(id: Long): FullProject? {
+        return try {
             val project =
                 projects.firstOrNull { it.id == id } ?: throw ProjectNotFoundException()
             val fullProject = projectDao.getFullProject(id)?.toFullProject()
@@ -74,7 +76,7 @@ class RoomProjectsRepository(
                     fullProject.listImage = it
                 }
             }
-            return@withContext fullProject
+            fullProject
         } catch (e: Exception) {
             null
         }

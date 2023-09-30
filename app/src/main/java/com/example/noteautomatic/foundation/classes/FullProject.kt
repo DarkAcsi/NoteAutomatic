@@ -1,4 +1,4 @@
-package com.example.noteautomatic.database.classes
+package com.example.noteautomatic.foundation.classes
 
 data class FullProject(
     val id: Long,

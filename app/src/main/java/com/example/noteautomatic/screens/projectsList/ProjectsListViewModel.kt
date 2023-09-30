@@ -1,22 +1,23 @@
 package com.example.noteautomatic.screens.projectsList
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.example.noteautomatic.database.classes.Project
 import com.example.noteautomatic.foundation.base.BaseViewModel
-import com.example.noteautomatic.model.project.ProjectsListener
-import com.example.noteautomatic.model.project.ProjectsRepository
+import com.example.noteautomatic.foundation.base.LiveResult
+import com.example.noteautomatic.foundation.base.MutableLiveResult
+import com.example.noteautomatic.foundation.base.PendingResult
+import com.example.noteautomatic.foundation.base.SuccessResult
+import com.example.noteautomatic.foundation.classes.Project
+import com.example.noteautomatic.foundation.model.project.ProjectsListener
+import com.example.noteautomatic.foundation.model.project.ProjectsRepository
 
 class ProjectsListViewModel(
     private val projectsRepository: ProjectsRepository
 ) : BaseViewModel() {
 
-    private val _projects = MutableLiveData<List<Project>>()
-    val projects: LiveData<List<Project>> = _projects
-
+    private val _projects = MutableLiveResult<List<Project>>(PendingResult())
+    val projects: LiveResult<List<Project>> = _projects
 
     private val listener: ProjectsListener = {
-        _projects.postValue(it)
+        _projects.postValue(SuccessResult(it))
     }
 
     init {
@@ -28,8 +29,8 @@ class ProjectsListViewModel(
         projectsRepository.removeListener(listener)
     }
 
-    fun loadProjects() {
-        projectsRepository.addListener(listener)
+    fun tryAgain() {
+        loadProjects()
     }
 
     fun deleteProjects() {
@@ -44,8 +45,12 @@ class ProjectsListViewModel(
         projectsRepository.selectProjects(project, selected)
     }
 
-    fun selectMoreProject(project: Project) : Boolean {
+    fun selectMoreProject(project: Project): Boolean {
         return projectsRepository.selectMoreProjects(project)
+    }
+
+    private fun loadProjects() {
+        projectsRepository.addListener(listener)
     }
 
 }

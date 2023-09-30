@@ -1,12 +1,12 @@
-package com.example.noteautomatic.database.dao
+package com.example.noteautomatic.foundation.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.noteautomatic.database.classes.Image
-import com.example.noteautomatic.database.entities.ImageEntity
+import com.example.noteautomatic.foundation.classes.Image
+import com.example.noteautomatic.foundation.database.entities.ImageEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
