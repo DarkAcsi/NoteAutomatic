@@ -21,41 +21,27 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
     private val args: ProjectCreationFragmentArgs by navArgs()
     private var newProject = FullProject(0, "")
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.loadProject(args.projectId)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentProjectCreationBinding.bind(view)
-        navigator().onToolbarVisibilityChanged(true)
+        viewModel.loadProject(args.projectId)
         with(binding) {
-            setFieldName(false)
-            viewModel.fullProject.observe(viewLifecycleOwner) { result ->
+            viewModel.viewState.observe(viewLifecycleOwner) { result ->
                 renderSimpleResult(binding.root, result) {
-                        if (it == null) {
-                            navigator().toMenu()
-                            navigator().toast("Couldn't find the project")
-                        } else {
-                            newProject = it
-                            btnToRun.isEnabled = (it.listImage.isNullOrEmpty()) and (it.id != 0L)
-                            if (it.id == 0L) {
-                                tvNameProject.text = ""
-                                edNameProject.hint = it.name
-                                navigator().renameToolbar(it.name)
-                            } else {
-                                tvNameProject.text = it.name
-                                navigator().renameToolbar(it.name)
-                            }
-                        }
+                    blockUI(!it.isSaving)
+                    newProject = it.fullProject
+                    settingPage()
+                    if (newProject.id == 0L) {
+                        tvNameProject.text = ""
+                        edNameProject.hint = newProject.name
+                        navigator().renameToolbar(newProject.name)
+                    } else {
+                        tvNameProject.text = newProject.name
+                        navigator().renameToolbar(newProject.name)
                     }
-            }
-            viewModel.fullProject.observe(viewLifecycleOwner) {
+                }
             }
         }
-
-        settingPage()
 
         with(binding) {
 
@@ -92,8 +78,9 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
                     tvNameProject.visibility = View.INVISIBLE
                     btnRename.visibility = View.INVISIBLE
                 }
+
                 false -> {
-                    if (newProject.id  == 0L)
+                    if (newProject.id == 0L)
                         setFieldName(true)
                     else {
                         edNameProject.visibility = View.INVISIBLE
@@ -108,39 +95,31 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
     private fun changeFocus(hasFocus: Boolean) {
         if ((!hasFocus) and (newProject.id != 0L)) {
             setFieldName(false)
+            binding.tvNameProject.text =
+                binding.edNameProject.text.ifBlank { binding.tvNameProject.text }
         }
     }
 
-    private fun blockUI(){
+    private fun blockUI(isEnabled: Boolean) {
         with(binding) {
-            edNameProject.isEnabled = false
-            btnRename.isEnabled = false
-            btnAddImage.isEnabled = false
-            btnSave.isEnabled = false
-            btnToRun.isEnabled = false
+            edNameProject.isEnabled = isEnabled
+            btnRename.isEnabled = isEnabled
+            btnAddImage.isEnabled = isEnabled
+            btnAddFile.isEnabled = isEnabled
+            btnSave.isEnabled = isEnabled
+            sbSpeed.isEnabled = isEnabled
+            edSpeed.isEnabled = isEnabled
+            btnToRun.isEnabled =
+                (newProject.listImage.isNullOrEmpty()) and (newProject.id != 0L)
 
-            saveProgressBar.visibility = View.VISIBLE
-        }
-    }
-
-    private fun unblockUI(){
-        with(binding) {
-            edNameProject.isEnabled = true
-            btnRename.isEnabled = true
-            btnAddImage.isEnabled = true
-            btnSave.isEnabled = true
-            btnToRun.isEnabled = true
-
-            saveProgressBar.visibility = View.GONE
+            saveProgressBar.visibility = if (!isEnabled) View.VISIBLE else View.GONE
         }
     }
 
     private fun saveProjectChange() {
-        var nameEd = binding.edNameProject.text.toString().trim()
-        var nameTv = binding.tvNameProject.text.toString().trim()
+        val nameEd = binding.edNameProject.text.toString().trim()
         val speed = binding.edSpeed.text.toString().ifEmpty { binding.edSpeed.hint.toString() }
-        viewModel.save(nameEd, nameTv, speed.toInt(), newProject)
-        setFieldName(newProject.id == 0L)
+        viewModel.save(nameEd, speed.toInt(), newProject)
     }
 
     private fun runProject() {

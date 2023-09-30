@@ -5,7 +5,6 @@ import com.example.noteautomatic.foundation.classes.Project
 import com.example.noteautomatic.foundation.database.dao.ImageDao
 import com.example.noteautomatic.foundation.database.dao.ProjectDao
 import com.example.noteautomatic.foundation.database.entities.ProjectEntity
-import com.example.noteautomatic.foundation.model.ProjectNotFoundException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,45 +39,42 @@ class RoomProjectsRepository(
         }
     }
 
-    override suspend fun updateProject(project: ProjectEntity): ProjectEntity {
-        val projectEntity = projectDao.insertOrUpdateProject(project)
-        if (project.id == 0L) {
-            projectDao.getAllProjects().collect { projectsFromDatabase ->
-                projects = if (projectsFromDatabase.isEmpty()) mutableListOf()
-                else projectsFromDatabase.toMutableList()
+    override suspend fun updateProject(project: ProjectEntity): FullProject {
+        return withContext(Dispatchers.IO) {
+            val projectId = projectDao.insertOrUpdateProject(project)
+            if (project.id == 0L) {
+                projects.add(Project(projectId, project.name))
 //                notifyChanges()
+
+            } else {
+                val index = projects.indexOfFirst { it.id == project.id }
+                if (index != -1)
+                    projects[index] = Project(project.id, project.name)
+//            notifyChanges()
             }
+            return@withContext project.toFullProject().copy(id = projectId)
         }
-        val index = projects.indexOfFirst { it.id == project.id }
-        if (index != -1)
-            projects[index] = Project(project.id, project.name)
-//        notifyChanges()
-        return projectEntity
     }
 
     override suspend fun getNames(name: String, id: Long): Boolean {
-        val names = projectDao.getNames()
-        val cnt: Int = names?.count { it == name } ?: 0
-        val projectId = projects.firstOrNull { it.id == id }?.id ?: 0
-        if ((cnt == 0) or (projectId == id))
-            return true
-        return false
+        return withContext(Dispatchers.IO) {
+            val names = projectDao.getNames()
+            val cnt: Int = names?.count { name == it } ?: 0
+            val projectId = projects.indexOfFirst { it.id == id }
+            if ((cnt == 0) or (projectId.toLong() == id))
+                return@withContext true
+            return@withContext false
+        }
     }
 
-    override suspend fun getById(id: Long): FullProject? {
-        return try {
-            val project =
-                projects.firstOrNull { it.id == id } ?: throw ProjectNotFoundException()
-            val fullProject = projectDao.getFullProject(id)?.toFullProject()
-
-            if (fullProject != null) {
-                imageDao.getAllImages(id).collect {
-                    fullProject.listImage = it
-                }
-            }
-            fullProject
-        } catch (e: Exception) {
-            null
+    override suspend fun getById(id: Long): FullProject {
+        return withContext(Dispatchers.IO) {
+            val index = projects.indexOfFirst { it.id == id }
+            if (index == -1)
+                return@withContext FullProject(0, "Input name")
+            var project = projectDao.getFullProject(id)?.toFullProject() ?: FullProject(0, "Input name")
+            project = project.copy(listImage = imageDao.getAllImages(id))
+            return@withContext project
         }
     }
 
@@ -134,8 +130,8 @@ class RoomProjectsRepository(
     }
 
     override fun addListener(listener: ProjectsListener) {
-        listeners.add(listener)
         listener.invoke(projects)
+        listeners.add(listener)
     }
 
     override fun removeListener(listener: ProjectsListener) {

@@ -9,9 +9,9 @@ typealias ProjectsListener = (projects: List<Project>) -> Unit
 interface ProjectsRepository {
 
     // with database
-    suspend fun updateProject(project: ProjectEntity) : ProjectEntity
+    suspend fun updateProject(project: ProjectEntity) : FullProject
 
-    suspend fun getById(id: Long): FullProject?
+    suspend fun getById(id: Long): FullProject
 
     suspend fun getNames(name: String, id: Long): Boolean
 

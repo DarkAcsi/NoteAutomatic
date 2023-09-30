@@ -1,6 +1,7 @@
 package com.example.noteautomatic.screens.projectsList
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,23 +28,24 @@ class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentProjectListBinding.bind(view)
 
-        settingPage()
         createRecyclerView()
 
         with(binding) {
-
             viewModel.projects.observe(viewLifecycleOwner) { result ->
-                renderSimpleResult(
-                    root = root,
-                    result = result,
-                    onSuccess = {
-                        if (it.isEmpty()) ivEmptyList.visibility = View.VISIBLE
-                        else rvProjectList.visibility = View.VISIBLE
-                        adapter.projects = it
+                renderSimpleResult(root, result) {
+                    adapter.projects = it
+                    binding.btnAddProject.visibility = View.VISIBLE
+                    if (it.isEmpty()) {
+                        ivEmptyList.visibility = View.VISIBLE
+                        rvProjectList.visibility = View.INVISIBLE
+                    } else {
+                        ivEmptyList.visibility = View.INVISIBLE
+                        rvProjectList.visibility = View.VISIBLE
                     }
-                )
+                }
+                settingPage()
             }
-            btnAddProject.visibility = View.VISIBLE
+
             onTryAgain(root) {
                 viewModel.tryAgain()
             }
@@ -65,14 +67,14 @@ class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        settingPage()
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        settingPage()
+//    }
 
     private fun settingPage() {
         navigator().onToolbarVisibilityChanged(false)
-        binding.toolbar.toolbarSelected.visibility = View.INVISIBLE
+        stateToolbarButton(selected)
     }
 
     private fun addNewProject() {
@@ -91,8 +93,9 @@ class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
     }
 
     private fun stateToolbarButton(select: Boolean) {
+        selected = select
         with(binding) {
-            if (select) {
+            if (selected) {
                 btnAddProject.text = "Delete"
                 toolbar.toolbarSelected.visibility = View.VISIBLE
             } else {
@@ -106,6 +109,7 @@ class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
         adapter = ProjectsAdapter(object : ProjectActionListener {
 
             override fun onProjectSetting(project: Project) {
+                Log.d("fff", "onProjectSetting $project")
                 val direction =
                     ProjectsListFragmentDirections.actionProjectsListFragmentToProjectCreationFragment(
                         projectId = project.id,

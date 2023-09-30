@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 
-abstract class BaseFragment(private val layoutId: Int) : Fragment(layoutId) {
+abstract class BaseFragment(layoutId: Int) : Fragment(layoutId) {
 
     abstract val viewModel: BaseViewModel
     fun <T> renderResult(

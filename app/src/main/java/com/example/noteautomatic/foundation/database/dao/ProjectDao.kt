@@ -21,7 +21,7 @@ interface ProjectDao {
     fun getFullProject(projectId: Long): ProjectEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertOrUpdateProject(project: ProjectEntity): ProjectEntity
+    fun insertOrUpdateProject(project: ProjectEntity): Long
 
     @Query("DELETE FROM projects WHERE id IN (:indexes)")
     fun deleteProjects(indexes: List<Long>)

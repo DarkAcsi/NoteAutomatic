@@ -35,26 +35,19 @@
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/toolbar_selected"
-        android:visibility="gone"
-        tools:visibility="visible" />
+        layout="@layout/toolbar_selected"/>
 
-    <include
-        android:id="@+id/includeResult"
-        layout="@layout/part_result"
-        android:visibility="gone"
-        tools:visibility="gone" />
+    <include layout="@layout/part_result" />
 
     <ImageView
         android:id="@+id/ivEmptyList"
-        android:layout_width="225dp"
-        android:layout_height="195dp"
-        android:layout_marginTop="148dp"
-        android:visibility="gone"
+        android:layout_width="230dp"
+        android:layout_height="230dp"
+        android:src="@drawable/baseline_add_a_photo_24"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.526"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/avatars" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
