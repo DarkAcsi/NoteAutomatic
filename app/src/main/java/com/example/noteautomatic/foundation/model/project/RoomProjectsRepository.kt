@@ -15,8 +15,7 @@ import kotlin.coroutines.CoroutineContext
 
 class RoomProjectsRepository(
     private val projectDao: ProjectDao,
-    private val imageDao: ImageDao,
-    private val ioDispatcher: CoroutineDispatcher
+    private val imageDao: ImageDao
 ) : ProjectsRepository, CoroutineScope {
 
     private var projects = mutableListOf<Project>()
@@ -25,7 +24,7 @@ class RoomProjectsRepository(
 
     private val job = Job()
     override val coroutineContext: CoroutineContext
-        get() = ioDispatcher + job
+        get() = Dispatchers.IO + job
 
     init {
         launch {

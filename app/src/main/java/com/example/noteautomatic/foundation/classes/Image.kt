@@ -8,5 +8,4 @@ data class Image(
     @ColumnInfo(name = "project_id") val projectId: Long,
     val position: Int,
     @ColumnInfo(name = "res_image") val resImage: Uri?,
-    val file: Boolean = false
 )

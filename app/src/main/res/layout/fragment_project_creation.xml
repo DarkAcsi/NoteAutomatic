@@ -43,6 +43,9 @@
         android:layout_height="28dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="28dp"
+        android:min="0"
+        android:max="300"
+        android:progress="100"
         app:layout_constraintBottom_toTopOf="@+id/btnCancelProject"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rvImages"
@@ -67,6 +70,7 @@
         android:autofillHints="100"
         android:ems="10"
         android:inputType="numberSigned"
+        android:text="100"
         app:layout_constraintBottom_toTopOf="@+id/btnSave"
         app:layout_constraintStart_toEndOf="@+id/sbSpeed"
         app:layout_constraintTop_toBottomOf="@+id/rvImages" />

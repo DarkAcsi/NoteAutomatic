@@ -1,4 +1,4 @@
-package com.example.noteautomatic.foundation
+package com.example.noteautomatic.screens
 
 import android.os.Bundle
 import androidx.navigation.NavDirections
@@ -15,6 +15,6 @@ interface Navigator {
 
     fun renameToolbar(name: String)
 
-    fun toast(massage: String)
+    fun toast(message: String)
 
 }

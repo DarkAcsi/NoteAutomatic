@@ -20,14 +20,12 @@ object Repositories {
             .build()
     }
 
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-
     val projectsRepository: ProjectsRepository by lazy {
-        RoomProjectsRepository(database.getProjectDao(), database.getImageDao(), ioDispatcher)
+        RoomProjectsRepository(database.getProjectDao(), database.getImageDao())
     }
 
     val imagesRepository: ImagesRepository by lazy {
-        RoomImagesRepository(database.getProjectDao(), database.getImageDao(), ioDispatcher)
+        RoomImagesRepository(database.getImageDao())
     }
 
     fun init(context: Context) {

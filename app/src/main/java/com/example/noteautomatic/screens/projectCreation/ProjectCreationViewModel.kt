@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class ProjectCreationViewModel(
     private val projectsRepository: ProjectsRepository
-) : BaseViewModel() {
+) : BaseViewModel(), ImageActionListener {
 
     private val _viewState = MediatorLiveResult<ViewState>()
     val viewState: LiveResult<ViewState> = _viewState
@@ -45,9 +45,10 @@ class ProjectCreationViewModel(
             } else if ((project.id == 0L) and (!projectsRepository.getNames(nameEd, project.id))) {
                 _fullProject.postValue(SuccessResult(project.copy(name = "Name is already used")))
             } else {
-                var fullProject = if (projectsRepository.getNames(nameEd, project.id))
-                    FullProject(project.id, nameEd, speed)
-                else FullProject(project.id, project.name, speed)
+                var fullProject =
+                    if (projectsRepository.getNames(nameEd, project.id) and nameEd.isNotBlank())
+                        FullProject(project.id, nameEd, speed)
+                    else FullProject(project.id, project.name, speed)
                 fullProject =
                     projectsRepository.updateProject(ProjectEntity.toProjectEntity(fullProject))
                 fullProject = fullProject.copy(listImage = listImage)

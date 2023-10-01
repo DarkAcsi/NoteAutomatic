@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.noteautomatic.R
 import com.example.noteautomatic.databinding.ItemProjectBinding
 import com.example.noteautomatic.foundation.classes.Project
+import com.example.noteautomatic.screens.ProjectDiffCallback
 
 interface ProjectActionListener {
 
@@ -20,23 +21,6 @@ interface ProjectActionListener {
 
     fun onProjectPlay(project: Project)
 
-}
-
-class ProjectDiffCallback(
-    private val oldList: List<Project>,
-    private val newList: List<Project>
-) : DiffUtil.Callback() {
-    override fun getOldListSize(): Int = oldList.size
-
-    override fun getNewListSize(): Int = newList.size
-
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition].id == newList[newItemPosition].id
-    }
-
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition] == newList[newItemPosition] // Project - data class
-    }
 }
 
 class ProjectsAdapter(private val actionListener: ProjectActionListener) :

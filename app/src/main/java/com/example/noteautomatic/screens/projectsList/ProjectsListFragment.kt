@@ -109,7 +109,6 @@ class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
         adapter = ProjectsAdapter(object : ProjectActionListener {
 
             override fun onProjectSetting(project: Project) {
-                Log.d("fff", "onProjectSetting $project")
                 val direction =
                     ProjectsListFragmentDirections.actionProjectsListFragmentToProjectCreationFragment(
                         projectId = project.id,
