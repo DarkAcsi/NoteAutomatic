@@ -58,6 +58,10 @@ class MainActivity : AppCompatActivity(), Navigator {
             toMenu()
             return true
         }
+//        else if (currentDestination == R.id.projectRunFragment) {
+//            toMenu()
+//            return true
+//        }
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 

@@ -16,17 +16,16 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.noteautomatic.R
 import com.example.noteautomatic.Repositories
 import com.example.noteautomatic.databinding.FragmentProjectCreationBinding
 import com.example.noteautomatic.foundation.base.BaseFragment
 import com.example.noteautomatic.foundation.database.entities.Image
 import com.example.noteautomatic.foundation.database.entities.Project
-import com.example.noteautomatic.foundation.navigator
-import com.example.noteautomatic.foundation.viewModelCreator
+import com.example.noteautomatic.navigator
 import com.example.noteautomatic.screens.onTryAgain
 import com.example.noteautomatic.screens.renderSimpleResult
+import com.example.noteautomatic.viewModelCreator
 
 class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation) {
 
@@ -243,7 +242,6 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
     }
 
     private fun runProject() {
-        saveProjectChange()
         val direction =
             ProjectCreationFragmentDirections.actionProjectCreationFragmentToProjectRunFragment(
                 projectId = newProject.id,

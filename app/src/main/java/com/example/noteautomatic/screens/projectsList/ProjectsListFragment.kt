@@ -9,10 +9,10 @@ import com.example.noteautomatic.Repositories
 import com.example.noteautomatic.databinding.FragmentProjectListBinding
 import com.example.noteautomatic.foundation.base.BaseFragment
 import com.example.noteautomatic.foundation.database.entities.Project
-import com.example.noteautomatic.foundation.navigator
-import com.example.noteautomatic.foundation.viewModelCreator
+import com.example.noteautomatic.navigator
 import com.example.noteautomatic.screens.onTryAgain
 import com.example.noteautomatic.screens.renderSimpleResult
+import com.example.noteautomatic.viewModelCreator
 
 class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
 
@@ -33,7 +33,7 @@ class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
             viewModel.projects.observe(viewLifecycleOwner) { result ->
                 renderSimpleResult(root, result) {
                     adapter.projects = it
-                    binding.btnAddProject.visibility = View.VISIBLE
+                    btnAddProject.visibility = View.VISIBLE
                     if (it.isEmpty()) {
                         ivEmptyList.visibility = View.VISIBLE
                         rvProjectList.visibility = View.INVISIBLE

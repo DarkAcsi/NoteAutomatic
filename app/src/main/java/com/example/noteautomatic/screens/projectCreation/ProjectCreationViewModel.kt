@@ -33,6 +33,9 @@ class ProjectCreationViewModel(
 
     init {
         imagesRepository.addListener(listener)
+        _viewState.addSource(_project) { mergeSources() }
+        _viewState.addSource(_listImage) { mergeSources() }
+        _viewState.addSource(_isSaving) { mergeSources() }
     }
 
     fun loadProject(id: Long) {
@@ -40,9 +43,6 @@ class ProjectCreationViewModel(
             _project.postValue(SuccessResult(projectsRepository.getById(id)))
             imagesRepository.loadImages(id)
         }
-        _viewState.addSource(_project) { mergeSources() }
-        _viewState.addSource(_listImage) { mergeSources() }
-        _viewState.addSource(_isSaving) { mergeSources() }
     }
 
     fun save(

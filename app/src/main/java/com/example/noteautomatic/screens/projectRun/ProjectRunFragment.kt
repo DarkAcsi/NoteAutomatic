@@ -7,8 +7,8 @@ import androidx.navigation.fragment.navArgs
 import com.example.noteautomatic.R
 import com.example.noteautomatic.Repositories
 import com.example.noteautomatic.databinding.FragmentProjectRunBinding
-import com.example.noteautomatic.foundation.navigator
-import com.example.noteautomatic.foundation.viewModelCreator
+import com.example.noteautomatic.navigator
+import com.example.noteautomatic.viewModelCreator
 
 class ProjectRunFragment : Fragment(R.layout.fragment_project_run) {
 
@@ -30,9 +30,9 @@ class ProjectRunFragment : Fragment(R.layout.fragment_project_run) {
 
         navigator().onToolbarVisibilityChanged(false)
 
-        viewModel.projectRun.observe(viewLifecycleOwner) {
+//        viewModel.projectRun.observe(viewLifecycleOwner) {
 //            binding.tvNameProject.text = it.name
-        }
+//        }
 
 
         binding.btnToMenu.setOnClickListener {
@@ -40,12 +40,12 @@ class ProjectRunFragment : Fragment(R.layout.fragment_project_run) {
         }
 
         binding.btnToSetting.setOnClickListener {
-            val direction =
-                ProjectRunFragmentDirections.actionProjectRunFragmentToProjectCreationFragment(
-                    projectId = args.projectId,
-                    projectName = args.projectName
-                )
-            navigator().navigateTo(direction)
+//            val direction =
+//                ProjectRunFragmentDirections.actionProjectRunFragmentToProjectCreationFragment(
+//                    projectId = args.projectId,
+//                    projectName = args.projectName
+//                )
+//            navigator().navigateTo(direction)
         }
 
         binding.root.setOnClickListener{

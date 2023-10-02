@@ -37,9 +37,6 @@
         android:name="com.example.noteautomatic.screens.projectRun.ProjectRunFragment"
         android:label="projectName"
         tools:layout="@layout/fragment_project_run">
-        <action
-            android:id="@+id/action_projectRunFragment_to_projectCreationFragment"
-            app:destination="@id/projectCreationFragment" />
         <argument
             android:name="projectId"
             app:argType="long" />
