@@ -1,6 +1,5 @@
 package com.example.noteautomatic.screens.projectCreation
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.noteautomatic.foundation.base.BaseViewModel
@@ -81,7 +80,13 @@ class ProjectCreationViewModel(
     }
 
     override fun deleteImage(image: Image) {
-        imagesRepository.deleteImage(image.id)
+        _project.value?.map {
+            viewModelScope.launch {
+                _project.postValue(
+                    SuccessResult(it.copy(play = imagesRepository.deleteImage(image.id) != 0))
+                )
+            }
+        }
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {

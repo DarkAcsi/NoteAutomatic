@@ -1,12 +1,10 @@
 package com.example.noteautomatic.foundation.model.image
 
-import android.util.Log
 import com.example.noteautomatic.foundation.database.dao.ImageDao
 import com.example.noteautomatic.foundation.database.entities.Image
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
@@ -41,8 +39,8 @@ class RoomImagesRepository(
         }
     }
 
-    override fun deleteImage(id: Long) {
-        launch {
+    override suspend fun deleteImage(id: Long): Int {
+        return withContext(Dispatchers.IO) {
             val indexToDelete = images.indexOfFirst { it.id == id }
             if (indexToDelete != -1) {
                 images = ArrayList(images)
@@ -50,6 +48,7 @@ class RoomImagesRepository(
                 notifyChanges()
             }
             imageDao.deleteImage(id)
+            return@withContext images.size
         }
     }
 
