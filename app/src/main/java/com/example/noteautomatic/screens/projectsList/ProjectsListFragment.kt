@@ -1,7 +1,6 @@
 package com.example.noteautomatic.screens.projectsList
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -9,7 +8,7 @@ import com.example.noteautomatic.R
 import com.example.noteautomatic.Repositories
 import com.example.noteautomatic.databinding.FragmentProjectListBinding
 import com.example.noteautomatic.foundation.base.BaseFragment
-import com.example.noteautomatic.foundation.classes.Project
+import com.example.noteautomatic.foundation.database.entities.Project
 import com.example.noteautomatic.foundation.navigator
 import com.example.noteautomatic.foundation.viewModelCreator
 import com.example.noteautomatic.screens.onTryAgain
@@ -67,10 +66,10 @@ class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
         }
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//        settingPage()
-//    }
+    override fun onResume() {
+        super.onResume()
+        settingPage()
+    }
 
     private fun settingPage() {
         navigator().onToolbarVisibilityChanged(false)
@@ -144,8 +143,8 @@ class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
         with(binding) {
 
             val layoutManager = LinearLayoutManager(requireContext())
-            layoutManager.reverseLayout = true;
-            layoutManager.stackFromEnd = true;
+            layoutManager.reverseLayout = true
+            layoutManager.stackFromEnd = true
             rvProjectList.layoutManager = layoutManager
             rvProjectList.adapter = adapter
 

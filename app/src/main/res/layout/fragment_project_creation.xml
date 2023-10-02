@@ -43,8 +43,8 @@
         android:layout_height="28dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="28dp"
-        android:min="0"
         android:max="300"
+        android:min="0"
         android:progress="100"
         app:layout_constraintBottom_toTopOf="@+id/btnCancelProject"
         app:layout_constraintStart_toStartOf="parent"
@@ -66,9 +66,9 @@
         android:layout_width="65dp"
         android:layout_height="59dp"
         android:layout_marginTop="20dp"
-        android:hint="100"
         android:autofillHints="100"
         android:ems="10"
+        android:hint="100"
         android:inputType="numberSigned"
         android:text="100"
         app:layout_constraintBottom_toTopOf="@+id/btnSave"
@@ -91,7 +91,8 @@
         android:layout_marginEnd="16dp"
         android:text="add image"
         app:layout_constraintBottom_toTopOf="@+id/rvImages"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvNameProject" />
 
     <TextView
         android:id="@+id/tvNameProject"
@@ -120,11 +121,11 @@
         android:layout_width="204dp"
         android:layout_height="48dp"
         android:layout_marginTop="52dp"
+        android:autofillHints="Input name"
         android:ems="10"
+        android:hint="Input name"
         android:inputType="text"
         android:minHeight="48dp"
-        android:hint="Input name"
-        android:autofillHints="Input name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -139,7 +140,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvNameProject" />
 
-    <include layout = "@layout/part_result"/>
+    <include layout="@layout/part_result" />
 
     <ProgressBar
         android:id="@+id/saveProgressBar"

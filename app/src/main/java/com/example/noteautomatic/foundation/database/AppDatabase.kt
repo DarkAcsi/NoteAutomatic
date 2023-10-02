@@ -5,14 +5,15 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.noteautomatic.foundation.database.dao.ImageDao
 import com.example.noteautomatic.foundation.database.dao.ProjectDao
-import com.example.noteautomatic.foundation.database.entities.ImageEntity
-import com.example.noteautomatic.foundation.database.entities.ProjectEntity
+import com.example.noteautomatic.foundation.database.entities.Image
+import com.example.noteautomatic.foundation.database.entities.Project
+
 
 @Database(
-    version = 3,
+    version = 6,
     entities = [
-        ProjectEntity::class,
-        ImageEntity::class
+        Project::class,
+        Image::class
     ]
 )
 @TypeConverters(Converter::class)

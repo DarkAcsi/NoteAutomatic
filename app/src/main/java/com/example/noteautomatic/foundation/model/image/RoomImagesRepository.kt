@@ -1,11 +1,8 @@
 package com.example.noteautomatic.foundation.model.image
 
-import com.example.noteautomatic.foundation.classes.FullProject
-import com.example.noteautomatic.foundation.classes.Image
-import com.example.noteautomatic.foundation.classes.Project
+import android.util.Log
 import com.example.noteautomatic.foundation.database.dao.ImageDao
-import com.example.noteautomatic.foundation.database.entities.ProjectEntity
-import com.example.noteautomatic.foundation.model.project.ProjectsListener
+import com.example.noteautomatic.foundation.database.entities.Image
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -24,6 +21,52 @@ class RoomImagesRepository(
     private val job = Job()
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
+
+
+    override suspend fun loadImages(projectId: Long): List<Image> {
+        return withContext(Dispatchers.IO) {
+            val imagesProject = imageDao.getAllImages(projectId)
+            images = ArrayList(imagesProject)
+            notifyChanges()
+            return@withContext imagesProject
+        }
+    }
+
+    override suspend fun saveImages(projectId: Long) {
+        withContext(Dispatchers.IO) {
+            images = images.mapIndexed { index, it ->
+                it.copy(projectId = projectId, position = index)
+            }.toMutableList()
+            imageDao.insertOrUpdateImages(images)
+        }
+    }
+
+    override fun deleteImage(id: Long) {
+        launch {
+            val indexToDelete = images.indexOfFirst { it.id == id }
+            if (indexToDelete != -1) {
+                images = ArrayList(images)
+                images.removeAt(indexToDelete)
+                notifyChanges()
+            }
+            imageDao.deleteImage(id)
+        }
+    }
+
+    override fun moveImage(fromPosition: Int, toPosition: Int) {
+        val image = images[fromPosition]
+        images = ArrayList(images)
+        images.removeAt(fromPosition)
+        images.add(toPosition, image)
+        notifyChanges()
+    }
+
+    override fun localUpdate(listImage: List<Image>) {
+        images = ArrayList(images + listImage).mapIndexed { index, it ->
+            it.copy(position = index)
+        }.toMutableList()
+        notifyChanges()
+    }
 
     override fun addListener(listener: ImagesListener) {
         listener.invoke(images)

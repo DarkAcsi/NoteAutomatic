@@ -1,76 +1,122 @@
 package com.example.noteautomatic.screens.projectCreation
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.noteautomatic.foundation.base.BaseViewModel
 import com.example.noteautomatic.foundation.base.LiveResult
 import com.example.noteautomatic.foundation.base.MediatorLiveResult
 import com.example.noteautomatic.foundation.base.MutableLiveResult
+import com.example.noteautomatic.foundation.base.PendingResult
 import com.example.noteautomatic.foundation.base.SuccessResult
-import com.example.noteautomatic.foundation.classes.FullProject
-import com.example.noteautomatic.foundation.classes.Image
-import com.example.noteautomatic.foundation.database.entities.ProjectEntity
+import com.example.noteautomatic.foundation.database.entities.Image
+import com.example.noteautomatic.foundation.database.entities.Project
+import com.example.noteautomatic.foundation.model.image.ImagesListener
+import com.example.noteautomatic.foundation.model.image.ImagesRepository
 import com.example.noteautomatic.foundation.model.project.ProjectsRepository
 import kotlinx.coroutines.launch
 
 class ProjectCreationViewModel(
-    private val projectsRepository: ProjectsRepository
+    private val projectsRepository: ProjectsRepository,
+    private val imagesRepository: ImagesRepository,
 ) : BaseViewModel(), ImageActionListener {
 
-    private val _viewState = MediatorLiveResult<ViewState>()
+    private val _viewState = MediatorLiveResult<ViewState>(PendingResult())
     val viewState: LiveResult<ViewState> = _viewState
 
-    private val _fullProject = MutableLiveResult<FullProject>()
+    private val _project = MutableLiveResult<Project>(PendingResult())
+    private val _listImage = MutableLiveData<List<Image>>()
     private val _isSaving = MutableLiveData(false)
+
+    private val listener: ImagesListener = {
+        _listImage.postValue(it)
+    }
+
+    init {
+        imagesRepository.addListener(listener)
+    }
 
     fun loadProject(id: Long) {
         viewModelScope.launch {
-            _fullProject.postValue(SuccessResult(projectsRepository.getById(id)))
+            _project.postValue(SuccessResult(projectsRepository.getById(id)))
+            imagesRepository.loadImages(id)
         }
-        _viewState.addSource(_fullProject) { mergeSources() }
+        _viewState.addSource(_project) { mergeSources() }
+        _viewState.addSource(_listImage) { mergeSources() }
         _viewState.addSource(_isSaving) { mergeSources() }
     }
-
 
     fun save(
         nameEd: String,
         speed: Int,
-        project: FullProject,
-        listImage: List<Image> = emptyList()
+        project: Project
     ) {
         viewModelScope.launch {
             _isSaving.postValue(true)
             if ((project.id == 0L) and (nameEd.isEmpty())) {
-                _fullProject.postValue(SuccessResult(project.copy(name = "This field is required")))
+                _project.postValue(SuccessResult(project.copy(name = "This field is required")))
             } else if ((project.id == 0L) and (!projectsRepository.getNames(nameEd, project.id))) {
-                _fullProject.postValue(SuccessResult(project.copy(name = "Name is already used")))
+                _project.postValue(SuccessResult(project.copy(name = "Name is already used")))
             } else {
                 var fullProject =
                     if (projectsRepository.getNames(nameEd, project.id) and nameEd.isNotBlank())
-                        FullProject(project.id, nameEd, speed)
-                    else FullProject(project.id, project.name, speed)
-                fullProject =
-                    projectsRepository.updateProject(ProjectEntity.toProjectEntity(fullProject))
-                fullProject = fullProject.copy(listImage = listImage)
-                _fullProject.postValue(SuccessResult(fullProject))
+                        Project(project.id, nameEd, speed, _listImage.value?.isNotEmpty() == true)
+                    else Project(
+                        project.id,
+                        project.name,
+                        speed,
+                        _listImage.value?.isNotEmpty() == true
+                    )
+                fullProject = projectsRepository.updateProject(fullProject)
+                _project.postValue(SuccessResult(fullProject))
+
+                imagesRepository.saveImages(fullProject.id)
             }
             _isSaving.postValue(false)
         }
     }
 
+    fun saveImages(listImage: List<Image>) {
+        imagesRepository.localUpdate(listImage)
+    }
+
+    override fun deleteImage(image: Image) {
+        imagesRepository.deleteImage(image.id)
+    }
+
+    override fun onItemMove(fromPosition: Int, toPosition: Int) {
+        imagesRepository.moveImage(fromPosition, toPosition)
+    }
+
     private fun mergeSources() {
-        val project = _fullProject.value ?: return
+        val project = _project.value ?: return
+        val listImage = _listImage.value ?: return
         val isSaving = _isSaving.value ?: return
         _viewState.value = project.map {
             ViewState(
-                fullProject = it,
+                project = it,
+                listImage = listImage,
                 isSaving = isSaving
             )
         }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        imagesRepository.removeListener(listener)
+    }
+
+    fun tryAgain() {
+        viewState.value?.let { result ->
+            result.map {
+                loadProject(it.project.id)
+            }
+        }
+    }
+
     data class ViewState(
-        val fullProject: FullProject,
+        val project: Project,
+        val listImage: List<Image>,
         val isSaving: Boolean,
     )
 }

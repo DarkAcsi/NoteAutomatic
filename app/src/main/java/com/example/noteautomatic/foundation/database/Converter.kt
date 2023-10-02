@@ -9,14 +9,13 @@ import java.lang.reflect.Type
 class Converter {
 
     @TypeConverter
-    fun toUri(value: String?): Uri? {
-        val listType: Type = object : TypeToken<Uri?>() {}.type
-        return Gson().fromJson(value, listType)
+    fun toUri(value: String): Uri {
+        return Uri.parse(value)
     }
 
     @TypeConverter
-    fun fromUri(uri: Uri?): String? {
-        return Gson().toJson(uri)
+    fun fromUri(uri: Uri): String {
+        return uri.toString()
     }
 
 }

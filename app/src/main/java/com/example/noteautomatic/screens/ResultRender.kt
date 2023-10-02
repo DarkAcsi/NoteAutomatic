@@ -9,7 +9,11 @@ import com.example.noteautomatic.databinding.PartResultBinding
 import com.example.noteautomatic.foundation.base.AppResult
 import com.example.noteautomatic.foundation.base.BaseFragment
 
-fun <T> BaseFragment.renderSimpleResult(root: ViewGroup, result: AppResult<T>, onSuccess: (T) -> Unit) {
+fun <T> BaseFragment.renderSimpleResult(
+    root: ViewGroup,
+    result: AppResult<T>,
+    onSuccess: (T) -> Unit
+) {
     val binding = PartResultBinding.bind(root)
 
     renderResult(

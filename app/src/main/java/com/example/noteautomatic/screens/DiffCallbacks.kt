@@ -1,8 +1,8 @@
 package com.example.noteautomatic.screens
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.noteautomatic.foundation.classes.Image
-import com.example.noteautomatic.foundation.classes.Project
+import com.example.noteautomatic.foundation.database.entities.Image
+import com.example.noteautomatic.foundation.database.entities.Project
 
 class ProjectDiffCallback(
     private val oldList: List<Project>,
@@ -17,7 +17,7 @@ class ProjectDiffCallback(
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition] == newList[newItemPosition] // Project - data class
+        return oldList[oldItemPosition] == newList[newItemPosition]
     }
 }
 
@@ -30,7 +30,7 @@ class ImageDiffCallback(
     override fun getNewListSize(): Int = newList.size
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition].id == newList[newItemPosition].id
+        return oldList[oldItemPosition].position == newList[newItemPosition].position
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {

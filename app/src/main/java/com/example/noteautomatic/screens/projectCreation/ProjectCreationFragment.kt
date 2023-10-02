@@ -13,38 +13,51 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.noteautomatic.R
 import com.example.noteautomatic.Repositories
 import com.example.noteautomatic.databinding.FragmentProjectCreationBinding
 import com.example.noteautomatic.foundation.base.BaseFragment
-import com.example.noteautomatic.foundation.classes.FullProject
-import com.example.noteautomatic.foundation.classes.Image
+import com.example.noteautomatic.foundation.database.entities.Image
+import com.example.noteautomatic.foundation.database.entities.Project
 import com.example.noteautomatic.foundation.navigator
 import com.example.noteautomatic.foundation.viewModelCreator
+import com.example.noteautomatic.screens.onTryAgain
 import com.example.noteautomatic.screens.renderSimpleResult
 
 class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation) {
 
     private lateinit var binding: FragmentProjectCreationBinding
+    private lateinit var adapter: ImagesAdapter
     private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
 
-    override val viewModel by viewModelCreator { ProjectCreationViewModel(Repositories.projectsRepository) }
+    override val viewModel by viewModelCreator {
+        ProjectCreationViewModel(
+            Repositories.projectsRepository,
+            Repositories.imagesRepository
+        )
+    }
 
     private val args: ProjectCreationFragmentArgs by navArgs()
-    private var newProject = FullProject(0, "")
+    private var newProject = Project(0, "")
 
     private val requestPermission = 100
-    private val requestImagePick = 200
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentProjectCreationBinding.bind(view)
         viewModel.loadProject(args.projectId)
+        createRecyclerView()
+
         with(binding) {
             viewModel.viewState.observe(viewLifecycleOwner) { result ->
                 renderSimpleResult(binding.root, result) {
                     blockUI(!it.isSaving)
-                    newProject = it.fullProject
+                    newProject = it.project
+                    adapter.images = it.listImage
                     settingPage()
                     if (newProject.id == 0L) {
                         tvNameProject.text = ""
@@ -58,7 +71,15 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
                     }
                 }
             }
+
+            onTryAgain(root) {
+                viewModel.tryAgain()
+            }
         }
+
+        val itemTouchHelperCallback = ItemTouchHelperCallback(adapter)
+        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(binding.rvImages)
 
         with(binding) {
 
@@ -66,9 +87,13 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
 
             btnRename.setOnClickListener { setFieldName(true) }
 
-            btnAddImage.setOnClickListener { /*pickImage()*/ }
+            btnAddImage.setOnClickListener { pickImages() }
 
-            btnAddFile.setOnClickListener { /*pickImage()*/ }
+            btnAddFile.setOnClickListener { /*pickImages()*/ }
+
+            sbSpeed.setOnSeekBarChangeListener(Seekbar())
+
+            edSpeed.setOnFocusChangeListener { _, hasFocus -> changeSpeed(hasFocus) }
 
             btnCancelProject.setOnClickListener { navigator().toMenu() }
 
@@ -76,34 +101,48 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
 
             btnToRun.setOnClickListener { runProject() }
 
-            sbSpeed.setOnSeekBarChangeListener(Seekbar())
-
-            edSpeed.setOnFocusChangeListener { _, hasFocus -> changeSpeed(hasFocus) }
-
         }
 
-        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val data = result.data
-                val imagesUri = mutableListOf<Uri>()
-                val images = mutableListOf<Image>()
+        imagePickerLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    val data = result.data
+                    val imagesUri = mutableListOf<Uri>()
+                    val images = mutableListOf<Image>()
 
-                data?.clipData?.let { clipData ->
-                    for (i in 0 until clipData.itemCount) {
-                        imagesUri.add(clipData.getItemAt(i).uri)
+                    data?.clipData?.let { clipData ->
+                        for (i in 0 until clipData.itemCount) {
+                            imagesUri.add(clipData.getItemAt(i).uri)
+                            images.add(Image(0, 0, 0, clipData.getItemAt(i).uri))
+                        }
+                    } ?: data?.data?.let { uri ->
+                        imagesUri.add(uri)
+                        images.add(Image(0, 0, 0, uri))
                     }
-                } ?: data?.data?.let { uri ->
-                    imagesUri.add(uri)
-                    images.add(Image(0, 0, 0, uri))
+                    viewModel.saveImages(images)
                 }
-                newProject.listImage += images
             }
-        }
     }
 
     override fun onResume() {
         super.onResume()
         settingPage()
+    }
+
+    private fun createRecyclerView() {
+        adapter = ImagesAdapter(viewModel)
+        with(binding) {
+            val layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+            rvImages.layoutManager = layoutManager
+            rvImages.adapter = adapter
+            rvImages.itemAnimator = DefaultItemAnimator().apply {
+                moveDuration = 600
+            }
+        }
     }
 
     private fun blockUI(isEnabled: Boolean) {
@@ -116,7 +155,7 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
             sbSpeed.isEnabled = isEnabled
             edSpeed.isEnabled = isEnabled
             btnToRun.isEnabled =
-                isEnabled and (newProject.listImage.isEmpty()) and (newProject.id != 0L)
+                isEnabled and (newProject.play) and (newProject.id != 0L)
 
             saveProgressBar.visibility = if (!isEnabled) View.VISIBLE else View.GONE
         }
@@ -157,7 +196,7 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
         }
     }
 
-    private fun pickImages(){
+    private fun pickImages() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 android.Manifest.permission.READ_EXTERNAL_STORAGE
@@ -173,23 +212,6 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
             imagePickerLauncher.launch(intent)
         }
-    }
-
-    private fun saveProjectChange() {
-        changeSpeed(false)
-        val nameEd = binding.edNameProject.text.toString().trim()
-        val speed = binding.edSpeed.text.toString().ifEmpty { binding.edSpeed.hint.toString() }
-        viewModel.save(nameEd, speed.toInt(), newProject)
-    }
-
-    private fun runProject() {
-        saveProjectChange()
-        val direction =
-            ProjectCreationFragmentDirections.actionProjectCreationFragmentToProjectRunFragment(
-                projectId = newProject.id,
-                projectName = newProject.name
-            )
-        navigator().navigateTo(direction)
     }
 
     private fun changeSpeed(hasFocus: Boolean) {
@@ -213,7 +235,24 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
         }
     }
 
-    inner class Seekbar: SeekBar.OnSeekBarChangeListener{
+    private fun saveProjectChange() {
+        changeSpeed(false)
+        val nameEd = binding.edNameProject.text.toString().trim()
+        val speed = binding.edSpeed.text.toString().ifEmpty { binding.edSpeed.hint.toString() }
+        viewModel.save(nameEd, speed.toInt(), newProject)
+    }
+
+    private fun runProject() {
+        saveProjectChange()
+        val direction =
+            ProjectCreationFragmentDirections.actionProjectCreationFragmentToProjectRunFragment(
+                projectId = newProject.id,
+                projectName = newProject.name
+            )
+        navigator().navigateTo(direction)
+    }
+
+    inner class Seekbar : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
             binding.edSpeed.hint = progress.toString()
         }

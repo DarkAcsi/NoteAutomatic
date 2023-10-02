@@ -7,8 +7,6 @@ import com.example.noteautomatic.foundation.model.image.ImagesRepository
 import com.example.noteautomatic.foundation.model.image.RoomImagesRepository
 import com.example.noteautomatic.foundation.model.project.ProjectsRepository
 import com.example.noteautomatic.foundation.model.project.RoomProjectsRepository
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 
 object Repositories {
 

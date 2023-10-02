@@ -4,19 +4,61 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.noteautomatic.R
 import com.example.noteautomatic.databinding.ItemImageBinding
-import com.example.noteautomatic.foundation.classes.Image
+import com.example.noteautomatic.foundation.database.entities.Image
 import com.example.noteautomatic.screens.ImageDiffCallback
 
 
 interface ImageActionListener {
 
+    fun deleteImage(image: Image)
+
+    fun onItemMove(fromPosition: Int, toPosition: Int)
+
+}
+
+class ItemTouchHelperCallback(private val adapter: ImagesAdapter) : ItemTouchHelper.Callback() {
+    override fun getMovementFlags(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
+    ): Int {
+        val dragFlags = ItemTouchHelper.START or ItemTouchHelper.END
+        val swipeFlags = 0
+        return makeMovementFlags(dragFlags, swipeFlags)
+    }
+
+    override fun onMove(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        target: RecyclerView.ViewHolder
+    ): Boolean {
+        adapter.onItemMove(viewHolder.adapterPosition, target.adapterPosition)
+        return true
+    }
+
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
+
 }
 
 class ImagesAdapter(private val actionListener: ImageActionListener) :
     RecyclerView.Adapter<ImagesAdapter.ImagesViewHolder>(), View.OnClickListener {
+
+    init {
+        setHasStableIds(true)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return images[position].hashCode().toLong()
+    }
+
+
+    fun onItemMove(fromPosition: Int, toPosition: Int) {
+        actionListener.onItemMove(fromPosition, toPosition)
+    }
 
     var images: List<Image> = emptyList()
         set(newValue) {
@@ -27,17 +69,10 @@ class ImagesAdapter(private val actionListener: ImageActionListener) :
             diffResult.dispatchUpdatesTo(this)
         }
 
-
     override fun onClick(v: View?) {
         val image = v?.tag as Image
-        when (v.id) {
-            R.id.btnDelete -> {
-
-            }
-
-            else -> {
-
-            }
+        if (v.id == R.id.btnDelete) {
+            actionListener.deleteImage(image)
         }
     }
 
@@ -58,6 +93,12 @@ class ImagesAdapter(private val actionListener: ImageActionListener) :
         holder.itemView.tag = image
         with(holder.binding) {
             btnDelete.tag = image
+            with(holder.binding) {
+                btnDelete.tag = image
+                Glide.with(holder.itemView.context)
+                    .load(image.resImage)
+                    .into(ivImage)
+            }
         }
     }
 

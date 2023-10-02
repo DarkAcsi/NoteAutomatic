@@ -1,11 +1,8 @@
 package com.example.noteautomatic.foundation.model.project
 
-import com.example.noteautomatic.foundation.classes.FullProject
-import com.example.noteautomatic.foundation.classes.Project
 import com.example.noteautomatic.foundation.database.dao.ImageDao
 import com.example.noteautomatic.foundation.database.dao.ProjectDao
-import com.example.noteautomatic.foundation.database.entities.ProjectEntity
-import kotlinx.coroutines.CoroutineDispatcher
+import com.example.noteautomatic.foundation.database.entities.Project
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -38,20 +35,18 @@ class RoomProjectsRepository(
         }
     }
 
-    override suspend fun updateProject(project: ProjectEntity): FullProject {
+    override suspend fun updateProject(project: Project): Project {
         return withContext(Dispatchers.IO) {
             val projectId = projectDao.insertOrUpdateProject(project)
             if (project.id == 0L) {
                 projects.add(Project(projectId, project.name))
-//                notifyChanges()
 
             } else {
                 val index = projects.indexOfFirst { it.id == project.id }
                 if (index != -1)
                     projects[index] = Project(project.id, project.name)
-//            notifyChanges()
             }
-            return@withContext project.toFullProject().copy(id = projectId)
+            return@withContext project.copy(id = projectId)
         }
     }
 
@@ -66,14 +61,12 @@ class RoomProjectsRepository(
         }
     }
 
-    override suspend fun getById(id: Long): FullProject {
+    override suspend fun getById(id: Long): Project {
         return withContext(Dispatchers.IO) {
             val index = projects.indexOfFirst { it.id == id }
             if (index == -1)
-                return@withContext FullProject(0, "Input name")
-            var project = projectDao.getFullProject(id)?.toFullProject() ?: FullProject(0, "Input name")
-            project = project.copy(listImage = imageDao.getAllImages(id))
-            return@withContext project
+                return@withContext Project(0, "Input name")
+            return@withContext projectDao.getFullProject(id) ?: Project(0, "Input name")
         }
     }
 
@@ -92,8 +85,11 @@ class RoomProjectsRepository(
 
     override fun deleteProjects() {
         launch {
-            projectDao.deleteProjects(projects.filter { it.selected == true }
-                .map { project -> project.id })
+            val indexes = projects.filter { it.selected == true }.map { project -> project.id }
+            projectDao.deleteProjects(indexes)
+            indexes.forEach{
+                imageDao.deleteImages(it)
+            }
             projects = projects.filter { it.selected == false }.toMutableList()
             selectAllProjects(null)
         }
