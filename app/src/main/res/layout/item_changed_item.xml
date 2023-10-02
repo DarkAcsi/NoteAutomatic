@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/ivChangeImage"
+        android:layout_width="281dp"
+        android:layout_height="254dp"
+        android:src="@tools:sample/avatars"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <Button
+        android:id="@+id/btnDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="delete"
+        tools:layout_editor_absoluteX="187dp"
+        tools:layout_editor_absoluteY="26dp" />
+
+<!--    тоже самое, чтобы на ресайкле в projectCreation нормально выглядело-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>
