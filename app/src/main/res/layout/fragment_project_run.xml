@@ -48,8 +48,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnToMenu" />
 
-    <!-- картика паузы вероятно не понадобится, при нажатии на экран автоматически остановится
-        при нажатии на кнопку будет восстановление воспроизведения -->
-<!--    стрелки пока не создала, идентификары добавлю в процессе, возможно стоит вообще без них,
-        или лучше ими изменять не скорость, а картинку, но это как получится-->
+    <include layout="@layout/part_result" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

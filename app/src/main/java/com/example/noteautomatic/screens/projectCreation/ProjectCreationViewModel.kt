@@ -45,6 +45,12 @@ class ProjectCreationViewModel(
         }
     }
 
+    fun loadImages(id: Long) {
+        viewModelScope.launch{
+            _listImage.postValue(imagesRepository.loadImages(id))
+        }
+    }
+
     fun save(
         nameEd: String,
         speed: Int,

@@ -2,25 +2,43 @@ package com.example.noteautomatic.screens.projectRun
 
 import androidx.lifecycle.viewModelScope
 import com.example.noteautomatic.foundation.base.BaseViewModel
-import com.example.noteautomatic.foundation.model.project.ProjectsRepository
-import kotlinx.coroutines.Dispatchers
+import com.example.noteautomatic.foundation.base.LiveResult
+import com.example.noteautomatic.foundation.base.MutableLiveResult
+import com.example.noteautomatic.foundation.base.PendingResult
+import com.example.noteautomatic.foundation.base.SuccessResult
+import com.example.noteautomatic.foundation.database.entities.Image
+import com.example.noteautomatic.foundation.model.image.ImagesListener
+import com.example.noteautomatic.foundation.model.image.ImagesRepository
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ProjectRunViewModel(
-    private val projectsRepository: ProjectsRepository
+    private val imagesRepository: ImagesRepository
 ) : BaseViewModel() {
 
-//    private val _projectRun = MutableLiveResult<Project>()
-//    val projectRun: LiveResult<Project> = _projectRun
+    private var _images = MutableLiveResult<List<Image>>(PendingResult())
+    val images: LiveResult<List<Image>> = _images
 
-    fun loadProject(projectId: Long) {
-        viewModelScope.launch {
-            withContext(Dispatchers.Main) {
-//                _projectRun.value = projectsRepository.getById(projectId)
-            }
+    private val listener: ImagesListener = {
+        _images.postValue(SuccessResult(it))
+    }
+
+    init {
+        imagesRepository.addListener(listener)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        imagesRepository.removeListener(listener)
+    }
+
+    fun loadImages(id: Long) {
+        viewModelScope.launch{
+            _images.postValue(
+                SuccessResult(imagesRepository.loadImages(id))
+            )
         }
     }
+
 
 
 }
