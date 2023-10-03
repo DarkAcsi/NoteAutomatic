@@ -180,4 +180,9 @@
 
     <include layout="@layout/part_result" />
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_creation"
+        android:visibility="visible"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

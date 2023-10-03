@@ -1,5 +1,6 @@
 package com.example.noteautomatic.screens.projectCreation
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.noteautomatic.foundation.base.BaseViewModel
@@ -75,16 +76,37 @@ class ProjectCreationViewModel(
         }
     }
 
-    fun saveImages(listImage: List<Image>) {
-        imagesRepository.localUpdate(listImage)
+    fun saveImages(listImage: List<Image>, project: Project) {
+        if (project.id == 0L) imagesRepository.localUpdate(listImage)
+        else viewModelScope.launch {
+            _isSaving.postValue(true)
+            imagesRepository.localUpdate(listImage)
+            imagesRepository.saveImages(project.id)
+            var fullProject = Project(
+                    project.id,
+                    project.name,
+                    project.speed,
+                    _listImage.value?.isNotEmpty() == true
+                )
+            fullProject = projectsRepository.updateProject(fullProject)
+            _project.postValue(SuccessResult(fullProject))
+            _isSaving.postValue(false)
+        }
     }
 
     override fun deleteImage(image: Image) {
         _project.value?.map {
             viewModelScope.launch {
-                _project.postValue(
-                    SuccessResult(it.copy(play = imagesRepository.deleteImage(image.id) != 0))
-                )
+                val play = imagesRepository.deleteImage(image.id) != 0
+                Log.d("fff", "$play")
+                if (it.play != play) {
+                    _isSaving.postValue(true)
+                    projectsRepository.updateProject(it.copy(play = play))
+                    _project.postValue(
+                        SuccessResult(it.copy(play = play))
+                    )
+                    _isSaving.postValue(false)
+                }
             }
         }
     }

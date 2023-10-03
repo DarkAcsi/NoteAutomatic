@@ -72,7 +72,6 @@ class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
     }
 
     private fun settingPage() {
-        navigator().onToolbarVisibilityChanged(false)
         stateToolbarButton(selected)
     }
 

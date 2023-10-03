@@ -28,35 +28,43 @@ class ProjectRunFragment : Fragment(R.layout.fragment_project_run) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentProjectRunBinding.bind(view)
 
-        navigator().onToolbarVisibilityChanged(false)
+        setPlay()
 
-//        viewModel.projectRun.observe(viewLifecycleOwner) {
-//            binding.tvNameProject.text = it.name
-//        }
+        binding.root.setOnClickListener { setPause() }
 
+        binding.toolbar.ibHome.setOnClickListener { navigator().toMenu() }
 
-        binding.btnToMenu.setOnClickListener {
-            navigator().toMenu()
-        }
+        binding.toolbar.ibBack.setOnClickListener { navigator().navigateUp() }
 
-        binding.btnToSetting.setOnClickListener {
-//            val direction =
-//                ProjectRunFragmentDirections.actionProjectRunFragmentToProjectCreationFragment(
-//                    projectId = args.projectId,
-//                    projectName = args.projectName
-//                )
-//            navigator().navigateTo(direction)
-        }
+        binding.ibRestart.setOnClickListener {}
 
-        binding.root.setOnClickListener{
-            navigator().onToolbarVisibilityChanged(true)
-        }
+        binding.ibPlay.setOnClickListener { setPlay() }
+
+        binding.ibUp.setOnClickListener {}
+
+        binding.ibDown.setOnClickListener {}
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        setPause()
 
     }
 
     override fun onResume() {
         super.onResume()
-        navigator().onToolbarVisibilityChanged(false)
+        setPlay()
+    }
+
+    private fun setPause() {
+        binding.toolbar.toolbarRun.visibility = View.VISIBLE
+        binding.layoutPause.visibility = View.VISIBLE
+    }
+
+    private fun setPlay() {
+        binding.toolbar.toolbarRun.visibility = View.GONE
+        binding.layoutPause.visibility = View.GONE
     }
 
 }

@@ -7,7 +7,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import com.example.noteautomatic.databinding.ActivityMainBinding
-import com.example.noteautomatic.screens.Navigator
 
 class MainActivity : AppCompatActivity(), Navigator {
 
@@ -20,52 +19,26 @@ class MainActivity : AppCompatActivity(), Navigator {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
-
         val navHost =
             supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         navController = navHost.navController
 
-        navController.addOnDestinationChangedListener { _, destination, arguments ->
-            when (destination.id) {
-                R.id.projectsListFragment -> {
-                    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                    binding.toolbar.title = ""
-                }
-
-                R.id.projectCreationFragment -> {
-                    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                    arguments?.let {
-                        val projectName = it.getString("projectName") ?: ""
-                        binding.toolbar.title = projectName
-                    }
-                }
-
-                R.id.projectRunFragment -> {
-                    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                    arguments?.let {
-                        val projectName = it.getString("projectName") ?: ""
-                        binding.toolbar.title = projectName
-                    }
-                }
-            }
-        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val currentDestination = navController.currentDestination?.id
-        if (currentDestination == R.id.projectCreationFragment) {
-            toMenu()
-            return true
+        when (navController.currentDestination?.id){
+            R.id.projectCreationFragment -> {
+                toMenu()
+                return true
+            }
         }
-//        else if (currentDestination == R.id.projectRunFragment) {
-//            toMenu()
-//            return true
-//        }
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
-    @Deprecated("Deprecated in Java", ReplaceWith("onSupportNavigateUp()"))
+    override fun navigateUp() {
+        onSupportNavigateUp()
+    }
+
     override fun onBackPressed() {
         onSupportNavigateUp()
     }
@@ -81,18 +54,6 @@ class MainActivity : AppCompatActivity(), Navigator {
     override fun toMenu() {
         navController.popBackStack(R.id.projectsListFragment, true)
         navController.navigate(R.id.projectsListFragment)
-    }
-
-    override fun onToolbarVisibilityChanged(visible: Boolean) {
-        if (visible) {
-            supportActionBar?.show()
-        } else {
-            supportActionBar?.hide()
-        }
-    }
-
-    override fun renameToolbar(name: String) {
-        binding.toolbar.title = name
     }
 
     override fun toast(message: String) {

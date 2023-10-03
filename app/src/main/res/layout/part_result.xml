@@ -11,6 +11,7 @@
         android:layout_width="82dp"
         android:layout_height="150dp"
         android:layout_marginTop="144dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,10 +41,10 @@
         android:layout_width="137dp"
         android:layout_height="99dp"
         android:layout_marginTop="264dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/tvError"

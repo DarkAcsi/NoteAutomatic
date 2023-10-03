@@ -1,5 +1,6 @@
 package com.example.noteautomatic.foundation.model.image
 
+import android.util.Log
 import com.example.noteautomatic.foundation.database.dao.ImageDao
 import com.example.noteautomatic.foundation.database.entities.Image
 import kotlinx.coroutines.CoroutineScope

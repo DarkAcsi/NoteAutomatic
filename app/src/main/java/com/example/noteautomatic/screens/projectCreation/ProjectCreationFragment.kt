@@ -42,6 +42,7 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
 
     private val args: ProjectCreationFragmentArgs by navArgs()
     private var newProject = Project(0, "")
+    private var images = listOf<Image>()
 
     private val requestPermission = 100
 
@@ -61,12 +62,12 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
                     if (newProject.id == 0L) {
                         tvNameProject.text = ""
                         edNameProject.hint = newProject.name
-                        navigator().renameToolbar(newProject.name)
+                        toolbar.tvName.text = newProject.name
                     } else {
                         tvNameProject.text = newProject.name
                         sbSpeed.progress = newProject.speed
                         edSpeed.setText(newProject.speed.toString())
-                        navigator().renameToolbar(newProject.name)
+                        toolbar.tvName.text = newProject.name
                     }
                 }
             }
@@ -96,6 +97,8 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
 
             btnCancelProject.setOnClickListener { navigator().toMenu() }
 
+            toolbar.ibBack.setOnClickListener { navigator().navigateUp() }
+
             btnSave.setOnClickListener { saveProjectChange() }
 
             btnToRun.setOnClickListener { runProject() }
@@ -118,14 +121,20 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
                         imagesUri.add(uri)
                         images.add(Image(0, 0, 0, uri))
                     }
-                    viewModel.saveImages(images)
+                    viewModel.saveImages(images, newProject)
                 }
             }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        images = adapter.images
     }
 
     override fun onResume() {
         super.onResume()
         settingPage()
+        adapter.images = images
     }
 
     private fun createRecyclerView() {
@@ -142,6 +151,7 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
                 moveDuration = 600
             }
         }
+        adapter.images = images
     }
 
     private fun blockUI(isEnabled: Boolean) {
@@ -161,7 +171,6 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
     }
 
     private fun settingPage() {
-        navigator().onToolbarVisibilityChanged(true)
         setFieldName(false)
     }
 
@@ -236,12 +245,14 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
 
     private fun saveProjectChange() {
         changeSpeed(false)
+        changeFocus(false)
         val nameEd = binding.edNameProject.text.toString().trim()
         val speed = binding.edSpeed.text.toString().ifEmpty { binding.edSpeed.hint.toString() }
         viewModel.save(nameEd, speed.toInt(), newProject)
     }
 
     private fun runProject() {
+        images = adapter.images
         val direction =
             ProjectCreationFragmentDirections.actionProjectCreationFragmentToProjectRunFragment(
                 projectId = newProject.id,
