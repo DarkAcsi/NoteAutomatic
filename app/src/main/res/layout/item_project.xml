@@ -18,14 +18,16 @@
 
         <TextView
             android:id="@+id/tvItemProject"
-            android:layout_width="wrap_content"
+            android:layout_width="330dp"
             android:layout_height="62dp"
             android:layout_weight="1"
             android:clickable="false"
+            android:fontFamily="@font/inter_medium"
             android:gravity="center_vertical"
             android:paddingHorizontal="16dp"
-            android:textColor="#292727"
-            android:textSize="24sp"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/new_project" />
