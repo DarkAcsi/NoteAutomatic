@@ -8,10 +8,11 @@
 
     <Button
         android:id="@+id/btnToRun"
-        android:layout_width="375dp"
+        android:layout_width="0dp"
         android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_weight="1"
-
         android:backgroundTint="@color/light_yellow"
         android:drawableRight="@android:drawable/ic_media_play"
         android:fontFamily="@font/inter_bold"
@@ -25,43 +26,52 @@
 
     <Button
         android:id="@+id/btnCancelProject"
-        android:layout_width="170dp"
+        android:layout_width="0dp"
         android:layout_height="60dp"
         android:backgroundTint="@color/light_red"
         android:fontFamily="@font/inter_medium"
         android:text="Cancel"
         android:textColor="@color/black"
+        android:textSize="16sp"
         app:cornerRadius="15dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnToRun"
+        app:layout_constraintBottom_toBottomOf="@+id/btnSave"
+        app:layout_constraintEnd_toEndOf="@+id/btnAddFile"
         app:layout_constraintStart_toStartOf="@+id/btnToRun" />
 
     <Button
         android:id="@+id/btnSave"
-        android:layout_width="170dp"
+        android:layout_width="0dp"
         android:layout_height="60dp"
+        android:layout_marginBottom="4dp"
         android:backgroundTint="@color/light_purple"
         android:fontFamily="@font/inter_medium"
         android:text="Save Project"
         android:textColor="@color/black"
+        android:textSize="16sp"
         app:cornerRadius="15dp"
         app:layout_constraintBottom_toTopOf="@+id/btnToRun"
-        app:layout_constraintEnd_toEndOf="@+id/btnToRun" />
+        app:layout_constraintEnd_toEndOf="@+id/btnToRun"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/btnAddImage" />
 
     <SeekBar
         android:id="@+id/sbSpeed"
         android:layout_width="0dp"
         android:layout_height="28dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
-        android:min="0"
         android:max="300"
+        android:min="0"
         android:progress="100"
         android:progressDrawable="@drawable/bg_progress"
+        android:splitTrack="false"
         android:thumb="@android:drawable/btn_star"
         android:thumbTint="@color/purple"
-        app:layout_constraintBottom_toTopOf="@+id/btnSave"
+        android:thumbTintMode="multiply"
+        app:layout_constraintBottom_toBottomOf="@+id/edSpeed"
         app:layout_constraintEnd_toStartOf="@+id/edSpeed"
-        app:layout_constraintStart_toStartOf="@+id/btnCancelProject" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/btnCancelProject"
+        app:layout_constraintTop_toTopOf="@+id/edSpeed" />
 
     <TextView
         android:id="@+id/textView"
@@ -82,33 +92,38 @@
         android:ems="10"
         android:fontFamily="@font/inter_medium"
         android:hint="100"
-        android:text="100"
         android:inputType="numberSigned"
-        app:layout_constraintBottom_toBottomOf="@+id/sbSpeed"
-        app:layout_constraintEnd_toStartOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="@+id/sbSpeed" />
+        android:text="100"
+        app:layout_constraintBottom_toTopOf="@+id/btnSave"
+        app:layout_constraintEnd_toStartOf="@+id/textView" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvImages"
-        android:layout_width="379dp"
-        android:layout_height="193dp"
+        android:layout_width="370dp"
+        android:layout_height="0dp"
 
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/edSpeed"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.562"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnAddFile" />
 
     <Button
         android:id="@+id/btnAddImage"
-        android:layout_width="180dp"
-        android:layout_height="100dp"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
         android:backgroundTint="@color/light_purple"
+        android:drawableLeft="@android:drawable/ic_menu_gallery"
         android:fontFamily="@font/inter_medium"
-        android:text="Take image"
+        android:text="Add image"
         android:textColor="@color/black"
-        app:cornerRadius="20dp"
-        app:layout_constraintEnd_toEndOf="@+id/rvImages"
+        android:textSize="16sp"
+        app:cornerRadius="12dp"
+        app:layout_constraintEnd_toEndOf="@+id/btnToRun"
+        app:layout_constraintStart_toEndOf="@+id/btnAddFile"
         app:layout_constraintTop_toBottomOf="@+id/btnRename" />
 
     <EditText
@@ -122,48 +137,56 @@
         android:hint="Project Name"
         android:inputType="text"
         android:minHeight="48dp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/btnAddFile"
         app:layout_constraintStart_toStartOf="@+id/btnAddFile"
         app:layout_constraintTop_toTopOf="@+id/btnRename"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/tvNameProject"
+        android:scrollbars = "horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
         android:fontFamily="@font/inter_medium"
         android:inputType="text"
         android:minHeight="48dp"
         android:text=" Name"
-        app:layout_constraintBottom_toBottomOf="@+id/edNameProject"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/edNameProject"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="@+id/edNameProject" />
 
     <Button
         android:id="@+id/btnRename"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="104dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="4dp"
         android:fontFamily="@font/inter_medium"
+        android:textSize="16sp"
+        android:textColor="@color/black"
         android:text="Rename"
-        app:cornerRadius="15dp"
+        android:backgroundTint="@color/light_purple"
+        app:cornerRadius="12dp"
         app:layout_constraintEnd_toEndOf="@+id/btnAddImage"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnAddFile"
-        android:layout_width="180dp"
-        android:layout_height="100dp"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="8dp"
         android:backgroundTint="@color/light_purple"
+        android:drawableLeft="@android:drawable/ic_menu_upload"
         android:fontFamily="@font/inter_medium"
         android:text="Add file"
         android:textColor="@color/black"
-        app:cornerRadius="20dp"
-        app:layout_constraintStart_toStartOf="@+id/rvImages"
+        android:textSize="16sp"
+        app:cornerRadius="12dp"
+        app:layout_constraintEnd_toStartOf="@+id/btnAddImage"
+        app:layout_constraintStart_toStartOf="@+id/btnToRun"
         app:layout_constraintTop_toTopOf="@+id/btnAddImage" />
 
     <ProgressBar

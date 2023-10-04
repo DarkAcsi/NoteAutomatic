@@ -91,11 +91,11 @@ class ProjectsAdapter(private val actionListener: ProjectActionListener) :
             ivPlay.tag = project
             when (project.selected) {
                 true -> {
-                    ivPlay.setImageResource(android.R.drawable.checkbox_on_background)
+                    ivPlay.setImageResource(R.drawable.checkbox_on)
                 }
 
                 false -> {
-                    ivPlay.setImageResource(android.R.drawable.checkbox_off_background)
+                    ivPlay.setImageResource(R.drawable.checkbox_off)
                 }
 
                 else -> {
