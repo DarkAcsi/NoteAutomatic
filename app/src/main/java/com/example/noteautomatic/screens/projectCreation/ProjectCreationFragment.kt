@@ -256,7 +256,8 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
         val direction =
             ProjectCreationFragmentDirections.actionProjectCreationFragmentToProjectRunFragment(
                 projectId = newProject.id,
-                projectName = newProject.name
+                projectName = newProject.name,
+                projectSpeed = newProject.speed
             )
         navigator().navigateTo(direction)
     }

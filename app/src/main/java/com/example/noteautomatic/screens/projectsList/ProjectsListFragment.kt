@@ -79,8 +79,7 @@ class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
         if (!selected) {
             val direction =
                 ProjectsListFragmentDirections.actionProjectsListFragmentToProjectCreationFragment(
-                    projectId = 0,
-                    projectName = ""
+                    projectId = 0
                 )
             navigator().navigateTo(direction)
         } else {
@@ -109,8 +108,7 @@ class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
             override fun onProjectSetting(project: Project) {
                 val direction =
                     ProjectsListFragmentDirections.actionProjectsListFragmentToProjectCreationFragment(
-                        projectId = project.id,
-                        projectName = project.name
+                        projectId = project.id
                     )
                 navigator().navigateTo(direction)
             }
@@ -132,7 +130,8 @@ class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
                     val direction =
                         ProjectsListFragmentDirections.actionProjectsListFragmentToProjectRunFragment(
                             projectId = project.id,
-                            projectName = project.name
+                            projectName = project.name,
+                            projectSpeed = project.speed
                         )
                     navigator().navigateTo(direction)
                 }
