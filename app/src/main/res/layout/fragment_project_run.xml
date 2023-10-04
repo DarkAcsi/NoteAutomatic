@@ -17,37 +17,41 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <ImageButton
         android:id="@+id/btnToSetting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:text="Project settings"
+        android:background="@drawable/btn_settings"
+        app:layout_constraintBottom_toBottomOf="@+id/btnPause"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.18"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/btnPause"
+        app:layout_constraintVertical_bias="0.555" />
 
-    <Button
-        android:id="@+id/btnToMenu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Back to menu"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnToSetting" />
-
-    <Button
+    <ImageButton
         android:id="@+id/btnPause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Paused"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/btn_play"
+        app:layout_constraintBottom_toBottomOf="@+id/rvRunProject"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnToMenu" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btnToMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/btn_home"
+        android:backgroundTint="#D8D8D8"
+        app:layout_constraintBottom_toBottomOf="@+id/rvRunProject"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.513"
+        app:layout_constraintStart_toEndOf="@+id/btnPause"
+        app:layout_constraintTop_toTopOf="@+id/btnPause" />
 
     <!-- картика паузы вероятно не понадобится, при нажатии на экран автоматически остановится
         при нажатии на кнопку будет восстановление воспроизведения -->

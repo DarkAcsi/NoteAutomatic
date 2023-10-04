@@ -47,6 +47,8 @@
         android:gravity="center_vertical"
         android:textColor="@color/white"
         android:textSize="16sp"
+        android:maxLines="1"
+        android:ellipsize="end"
         app:layout_constraintBottom_toBottomOf="@+id/ibBack"
         app:layout_constraintStart_toEndOf="@+id/ibBack"
         app:layout_constraintTop_toTopOf="@+id/ibBack" />
