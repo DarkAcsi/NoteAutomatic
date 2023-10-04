@@ -40,25 +40,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@android:drawable/ic_media_play" />
+            android:src="@drawable/btn_play" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/ibUp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:src="@drawable/btn_up" />
 
-            <ImageButton
-                android:id="@+id/ibUp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@android:drawable/stat_sys_upload" />
-
-            <ImageButton
+        <ImageButton
                 android:id="@+id/ibDown"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@android:drawable/stat_sys_download" />
+                android:src="@drawable/btn_down" />
         </LinearLayout>
 
     </LinearLayout>
