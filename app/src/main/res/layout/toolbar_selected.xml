@@ -16,7 +16,7 @@
         android:layout_gravity="center"
         android:layout_marginStart="20dp"
         android:button="@drawable/checkbox_on_off"
-        android:checked="false"
+        android:buttonTint="@color/white"
         android:fontFamily="@font/inter_medium"
         android:paddingLeft="10dp"
         android:text="Check all"
