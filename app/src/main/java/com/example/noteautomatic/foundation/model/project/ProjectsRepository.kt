@@ -22,7 +22,7 @@ interface ProjectsRepository {
 
     fun selectProjects(project: Project, selected: Boolean)
 
-    fun selectMoreProjects(project: Project): Boolean
+    fun selectMoreProjects(project: Project): Boolean?
 
     // other
     fun addListener(listener: ProjectsListener)

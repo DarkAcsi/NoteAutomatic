@@ -48,6 +48,7 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentProjectCreationBinding.bind(view)
+        viewModel.loadProject(args.projectId)
         createRecyclerView()
 
         with(binding) {
@@ -66,10 +67,11 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
                         sbSpeed.progress = newProject.speed
                         edSpeed.setText(newProject.speed.toString())
                         toolbar.tvName.text = newProject.name
+                        btnToRun.isEnabled =
+                            (!it.isSaving) and (newProject.play) and (newProject.id != 0L)
                     }
                 }
             }
-            viewModel.loadProject(args.projectId)
 
             onTryAgain(root) {
                 viewModel.tryAgain()
@@ -97,6 +99,8 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
             btnCancelProject.setOnClickListener { navigator().toMenu() }
 
             toolbar.ibBack.setOnClickListener { navigator().navigateUp() }
+
+            toolbar.ibDelete.setOnClickListener { deleteProject() }
 
             btnSave.setOnClickListener { saveProjectChange() }
 
@@ -126,6 +130,7 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
     }
 
     private fun createRecyclerView() {
+        viewModel.loadProject(newProject.id)
         adapter = ImagesAdapter(viewModel)
         with(binding) {
             val layoutManager = LinearLayoutManager(
@@ -139,7 +144,6 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
                 moveDuration = 600
             }
         }
-        viewModel.loadProject(newProject.id)
     }
 
     private fun blockUI(isEnabled: Boolean) {
@@ -240,7 +244,13 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
     }
 
     private fun runProject() {
-        saveProjectChange()
+        viewModel.runProject(
+            { saveProjectChange() },
+            { runProjectViewModel() }
+        )
+    }
+
+    private fun runProjectViewModel() {
         val direction =
             ProjectCreationFragmentDirections.actionProjectCreationFragmentToProjectRunFragment(
                 projectId = newProject.id,
@@ -248,6 +258,11 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
                 projectSpeed = newProject.speed
             )
         navigator().navigateTo(direction)
+    }
+
+    private fun deleteProject() {
+        viewModel.deleteProject(newProject.id) { navigator().toMenu() }
+        navigator().toMenu()
     }
 
     inner class Seekbar : SeekBar.OnSeekBarChangeListener {

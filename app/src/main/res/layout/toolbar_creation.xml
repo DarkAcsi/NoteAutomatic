@@ -17,9 +17,16 @@
 
     <TextView
         android:id="@+id/tvName"
+        android:layout_width="268dp"
+        android:layout_height="45dp"
+        android:layout_weight="1"
+        android:text="TextView" />
+
+    <ImageButton
+        android:id="@+id/ibDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="TextView" />
+        app:srcCompat="@android:drawable/ic_menu_delete" />
 
 </LinearLayout>

@@ -13,7 +13,6 @@ import com.example.noteautomatic.foundation.database.entities.Project
 import com.example.noteautomatic.foundation.model.image.ImagesListener
 import com.example.noteautomatic.foundation.model.image.ImagesRepository
 import com.example.noteautomatic.foundation.model.project.ProjectsRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ProjectCreationViewModel(
@@ -93,6 +92,24 @@ class ProjectCreationViewModel(
             fullProject = projectsRepository.updateProject(fullProject)
             _project.postValue(SuccessResult(fullProject))
             _isSaving.postValue(false)
+        }
+    }
+
+    fun deleteProject(id: Long, toMenu:() -> Unit ) {
+        viewModelScope.launch {
+            _isSaving.postValue(true)
+            projectsRepository.deleteProject(id)
+            _isSaving.postValue(false)
+            toMenu()
+        }
+    }
+
+    fun runProject(save: () -> Unit, toMenu: () -> Unit) {
+        viewModelScope.launch {
+            _isSaving.postValue(true)
+            save()
+            _isSaving.postValue(false)
+            toMenu()
         }
     }
 

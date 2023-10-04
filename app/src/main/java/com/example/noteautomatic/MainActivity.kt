@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import com.example.noteautomatic.databinding.ActivityMainBinding
+import com.example.noteautomatic.screens.projectsList.BackPressed
 
 class MainActivity : AppCompatActivity(), Navigator {
 
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        when (navController.currentDestination?.id){
+        when (navController.currentDestination?.id) {
             R.id.projectCreationFragment -> {
                 toMenu()
                 return true
@@ -40,7 +41,12 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun onBackPressed() {
-        onSupportNavigateUp()
+        val navHost =
+            supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+        val currentFragment = navHost.childFragmentManager.fragments[0]
+
+        if (currentFragment is BackPressed) currentFragment.onBackPressed()
+        else onSupportNavigateUp()
     }
 
     override fun navigateTo(direction: NavDirections) {

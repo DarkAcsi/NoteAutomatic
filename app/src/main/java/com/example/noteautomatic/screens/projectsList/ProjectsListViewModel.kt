@@ -45,7 +45,7 @@ class ProjectsListViewModel(
         projectsRepository.selectProjects(project, selected)
     }
 
-    fun selectMoreProject(project: Project): Boolean {
+    fun selectMoreProject(project: Project): Boolean? {
         return projectsRepository.selectMoreProjects(project)
     }
 

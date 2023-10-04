@@ -111,9 +111,9 @@ class RoomProjectsRepository(
         notifyChanges()
     }
 
-    override fun selectMoreProjects(project: Project): Boolean {
+    override fun selectMoreProjects(project: Project): Boolean? {
         val index = projects.indexOfFirst { it.id == project.id }
-        val count = projects.count { it.selected == true && it.id != project.id }
+        val count = projects.count { (it.selected == true) and (it.id != project.id) }
         if (count == 0) {
             selectProjects(project, false)
             return false
@@ -121,6 +121,8 @@ class RoomProjectsRepository(
         projects = ArrayList(projects)
         projects[index] = projects[index].copy(selected = project.selected != true)
         notifyChanges()
+        if ((count == (projects.size - 1)) and (project.selected == false))
+            return null
         return true
     }
 

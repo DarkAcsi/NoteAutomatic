@@ -14,7 +14,7 @@ import com.example.noteautomatic.screens.onTryAgain
 import com.example.noteautomatic.screens.renderSimpleResult
 import com.example.noteautomatic.viewModelCreator
 
-class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
+class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list), BackPressed {
 
     private lateinit var binding: FragmentProjectListBinding
     private lateinit var adapter: ProjectsAdapter
@@ -41,6 +41,7 @@ class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
                         ivEmptyList.visibility = View.INVISIBLE
                         rvProjectList.visibility = View.VISIBLE
                     }
+                    toolbar.cbSelectedAll.isChecked = selectedAll
                 }
                 settingPage()
             }
@@ -54,6 +55,7 @@ class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
             toolbar.btnCancel.setOnClickListener {
                 stateToolbarButton(false)
                 selected = false
+                selectedAll = false
                 viewModel.selectAllProjects(null)
             }
 
@@ -62,6 +64,7 @@ class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
                     selectedAll = true
                     viewModel.selectAllProjects(true)
                 }
+                toolbar.cbSelectedAll.isChecked = selectedAll
             }
         }
     }
@@ -115,12 +118,15 @@ class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
 
             override fun onProjectsSelect(project: Project, select: Boolean) {
                 selected = select
+                selectedAll = if (adapter.projects.count() == 1) selected else false
                 stateToolbarButton(selected)
                 viewModel.selectProjects(project, selected)
             }
 
             override fun onProjectSelectMore(project: Project): Boolean {
-                selected = viewModel.selectMoreProject(project)
+                val switch = viewModel.selectMoreProject(project)
+                selected = switch != false
+                selectedAll = switch == null
                 stateToolbarButton(selected)
                 return selected
             }
@@ -152,4 +158,12 @@ class ProjectsListFragment : BaseFragment(R.layout.fragment_project_list) {
             }
         }
     }
+
+    override fun onBackPressed() {
+        selected = false
+        selectedAll = false
+        stateToolbarButton(false)
+        viewModel.selectAllProjects(null)
+    }
+
 }
