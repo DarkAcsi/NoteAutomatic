@@ -11,7 +11,7 @@ interface ImagesRepository {
 
     suspend fun saveImages(projectId: Long)
 
-    suspend fun deleteImage(id: Long): Int
+    suspend fun deleteImage(image: Image): Int
 
     // without database
     fun moveImage(fromPosition: Int, toPosition: Int)

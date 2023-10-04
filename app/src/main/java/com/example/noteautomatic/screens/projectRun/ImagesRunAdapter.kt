@@ -15,7 +15,7 @@ import com.example.noteautomatic.screens.ImageDiffCallback
 
 interface ImagesRunListener {
 
-    fun setPause()
+    fun setPauseScroll()
 
 }
 
@@ -33,7 +33,7 @@ class ImagesRunAdapter(private val actionListener: ImagesRunListener) :
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
         if (event?.action == MotionEvent.ACTION_DOWN) {
-            actionListener.setPause()
+            actionListener.setPauseScroll()
         }
         return true
     }

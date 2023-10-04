@@ -42,14 +42,12 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
 
     private val args: ProjectCreationFragmentArgs by navArgs()
     private var newProject = Project(0, "")
-    private var images = listOf<Image>()
 
     private val requestPermission = 100
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentProjectCreationBinding.bind(view)
-        viewModel.loadProject(args.projectId)
         createRecyclerView()
 
         with(binding) {
@@ -71,6 +69,7 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
                     }
                 }
             }
+            viewModel.loadProject(args.projectId)
 
             onTryAgain(root) {
                 viewModel.tryAgain()
@@ -126,17 +125,6 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
             }
     }
 
-    override fun onPause() {
-        super.onPause()
-        images = adapter.images
-    }
-
-    override fun onResume() {
-        super.onResume()
-        settingPage()
-        adapter.images = images
-    }
-
     private fun createRecyclerView() {
         adapter = ImagesAdapter(viewModel)
         with(binding) {
@@ -151,7 +139,7 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
                 moveDuration = 600
             }
         }
-        adapter.images = images
+        viewModel.loadProject(newProject.id)
     }
 
     private fun blockUI(isEnabled: Boolean) {
@@ -252,7 +240,7 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
     }
 
     private fun runProject() {
-        images = adapter.images
+        saveProjectChange()
         val direction =
             ProjectCreationFragmentDirections.actionProjectCreationFragmentToProjectRunFragment(
                 projectId = newProject.id,

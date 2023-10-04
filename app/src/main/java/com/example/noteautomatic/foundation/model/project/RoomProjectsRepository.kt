@@ -87,7 +87,7 @@ class RoomProjectsRepository(
         launch {
             val indexes = projects.filter { it.selected == true }.map { project -> project.id }
             projectDao.deleteProjects(indexes)
-            indexes.forEach{
+            indexes.forEach {
                 imageDao.deleteImages(it)
             }
             projects = projects.filter { it.selected == false }.toMutableList()

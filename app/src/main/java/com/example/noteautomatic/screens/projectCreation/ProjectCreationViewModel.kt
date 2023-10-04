@@ -1,6 +1,5 @@
 package com.example.noteautomatic.screens.projectCreation
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.noteautomatic.foundation.base.BaseViewModel
@@ -14,6 +13,7 @@ import com.example.noteautomatic.foundation.database.entities.Project
 import com.example.noteautomatic.foundation.model.image.ImagesListener
 import com.example.noteautomatic.foundation.model.image.ImagesRepository
 import com.example.noteautomatic.foundation.model.project.ProjectsRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ProjectCreationViewModel(
@@ -41,14 +41,10 @@ class ProjectCreationViewModel(
 
     fun loadProject(id: Long) {
         viewModelScope.launch {
-            _project.postValue(SuccessResult(projectsRepository.getById(id)))
-            imagesRepository.loadImages(id)
-        }
-    }
-
-    fun loadImages(id: Long) {
-        viewModelScope.launch{
-            _listImage.postValue(imagesRepository.loadImages(id))
+            val listImage = imagesRepository.loadImages(id)
+            val fullProject = projectsRepository.getById(id)
+            _listImage.postValue(listImage)
+            _project.postValue(SuccessResult(fullProject))
         }
     }
 
@@ -89,11 +85,11 @@ class ProjectCreationViewModel(
             imagesRepository.localUpdate(listImage)
             imagesRepository.saveImages(project.id)
             var fullProject = Project(
-                    project.id,
-                    project.name,
-                    project.speed,
-                    _listImage.value?.isNotEmpty() == true
-                )
+                project.id,
+                project.name,
+                project.speed,
+                _listImage.value?.isNotEmpty() == true
+            )
             fullProject = projectsRepository.updateProject(fullProject)
             _project.postValue(SuccessResult(fullProject))
             _isSaving.postValue(false)
@@ -103,8 +99,7 @@ class ProjectCreationViewModel(
     override fun deleteImage(image: Image) {
         _project.value?.map {
             viewModelScope.launch {
-                val play = imagesRepository.deleteImage(image.id) != 0
-                Log.d("fff", "$play")
+                val play = imagesRepository.deleteImage(image) != 0
                 if (it.play != play) {
                     _isSaving.postValue(true)
                     projectsRepository.updateProject(it.copy(play = play))

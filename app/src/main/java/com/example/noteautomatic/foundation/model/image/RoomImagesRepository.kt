@@ -1,6 +1,5 @@
 package com.example.noteautomatic.foundation.model.image
 
-import android.util.Log
 import com.example.noteautomatic.foundation.database.dao.ImageDao
 import com.example.noteautomatic.foundation.database.entities.Image
 import kotlinx.coroutines.CoroutineScope
@@ -33,22 +32,23 @@ class RoomImagesRepository(
 
     override suspend fun saveImages(projectId: Long) {
         withContext(Dispatchers.IO) {
-            images = images.mapIndexed { index, it ->
+            images = ArrayList(images.mapIndexed { index, it ->
                 it.copy(projectId = projectId, position = index)
-            }.toMutableList()
+            })
             imageDao.insertOrUpdateImages(images)
+            loadImages(projectId)
         }
     }
 
-    override suspend fun deleteImage(id: Long): Int {
+    override suspend fun deleteImage(image: Image): Int {
         return withContext(Dispatchers.IO) {
-            val indexToDelete = images.indexOfFirst { it.id == id }
+            val indexToDelete = images.indexOfFirst { it.position == image.position }
             if (indexToDelete != -1) {
                 images = ArrayList(images)
                 images.removeAt(indexToDelete)
                 notifyChanges()
             }
-            imageDao.deleteImage(id)
+            if (image.id != 0L) imageDao.deleteImage(image.id)
             return@withContext images.size
         }
     }

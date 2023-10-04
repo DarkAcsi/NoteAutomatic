@@ -2,7 +2,6 @@ package com.example.noteautomatic.screens.projectRun
 
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,14 +30,15 @@ class ProjectRunFragment : BaseFragment(R.layout.fragment_project_run) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentProjectRunBinding.bind(view)
         viewModel.loadImages(args.projectId)
-        // binding.toolbar.tvName.text = args.projectName
+        binding.toolbar.tvName.text = args.projectName
 
-        setPlay()
+        setPause()
         createRecyclerView()
 
         viewModel.images.observe(viewLifecycleOwner) { result ->
             renderSimpleResult(binding.root, result) {
-                val previousPosition = (binding.rvRunProject.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                val previousPosition =
+                    (binding.rvRunProject.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
                 adapter.images = it
                 binding.rvRunProject.scrollToPosition(previousPosition)
             }
@@ -49,13 +49,16 @@ class ProjectRunFragment : BaseFragment(R.layout.fragment_project_run) {
 
         binding.toolbar.ibBack.setOnClickListener { navigator().navigateUp() }
 
-        binding.ibRestart.setOnClickListener {}
+        binding.ibRestart.setOnClickListener {movePosition(0)}
 
-        binding.ibPlay.setOnClickListener { setPlay() }
+        binding.ibPlay.setOnClickListener {
+            setPlay()
+            runProject()
+        }
 
-        binding.ibUp.setOnClickListener {}
+        binding.ibUp.setOnClickListener { movePosition(-1) }
 
-        binding.ibDown.setOnClickListener {}
+        binding.ibDown.setOnClickListener { movePosition(1) }
 
     }
 
@@ -66,7 +69,7 @@ class ProjectRunFragment : BaseFragment(R.layout.fragment_project_run) {
 
     override fun onResume() {
         super.onResume()
-        setPlay()
+        setPause()
     }
 
     private fun setPause() {
@@ -81,8 +84,8 @@ class ProjectRunFragment : BaseFragment(R.layout.fragment_project_run) {
 
     private fun createRecyclerView() {
         adapter = ImagesRunAdapter(object : ImagesRunListener {
-            override fun setPause() {
-                navigator().onToolbarVisibilityChanged(true)
+            override fun setPauseScroll() {
+                setPause()
             }
         })
         val layoutManager = LinearLayoutManager(requireContext())
@@ -99,16 +102,10 @@ class ProjectRunFragment : BaseFragment(R.layout.fragment_project_run) {
         midScreenTime = (screenHeight / 2f * midScreenSpeed).toLong()
     }
 
-    private fun restart() {
-        movePosition(0)
-        runProject()
-    }
-
     private fun runProject() {
         val layoutManager = binding.rvRunProject.layoutManager
 
         val smoothScroller = SmoothScroller()
-        Log.d("fff", "$midScreenSpeed   $midScreenTime")
 
         binding.rvRunProject.postDelayed({
             smoothScroller.targetPosition = adapter.itemCount - 1
@@ -131,14 +128,22 @@ class ProjectRunFragment : BaseFragment(R.layout.fragment_project_run) {
 
             else -> 0
         }
-        val targetPosition = position + move // -1 - up, +1 - down
-        binding.rvRunProject.smoothScrollToPosition(targetPosition)
+
+        val smoothScroller = object : LinearSmoothScroller(binding.rvRunProject.context) {
+            override fun getVerticalSnapPreference(): Int {
+                return SNAP_TO_START
+            }
+        }
+
+        smoothScroller.targetPosition = position
+        layoutManager.startSmoothScroll(smoothScroller)
+
     }
 
-    inner class SmoothScroller(private val instantly: Boolean = false) :
+    inner class SmoothScroller() :
         LinearSmoothScroller(requireContext()) {
         override fun getVerticalSnapPreference(): Int {
-            return SNAP_TO_ANY
+            return SNAP_TO_START
         }
 
         override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics): Float {
