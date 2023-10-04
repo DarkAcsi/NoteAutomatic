@@ -28,9 +28,6 @@
         <argument
             android:name="projectId"
             app:argType="long" />
-        <argument
-            android:name="projectName"
-            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/projectRunFragment"
@@ -43,5 +40,8 @@
         <argument
             android:name="projectName"
             app:argType="string" />
+        <argument
+            android:name="projectSpeed"
+            app:argType="integer" />
     </fragment>
 </navigation>
