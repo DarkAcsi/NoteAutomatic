@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context="com.example.noteautomatic.screens.projectRun.ProjectRunFragment">
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvRunProject"
         android:layout_width="0dp"
@@ -17,51 +16,61 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutPause"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
             android:id="@+id/ibRestart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/baseline_replay_circle_filled_24" />
+            android:background="@drawable/btn_reset"
+            app:layout_constraintBottom_toBottomOf="@+id/ibPlay"
+            app:layout_constraintEnd_toStartOf="@+id/ibPlay"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ibPlay"
+            app:layout_constraintVertical_bias="0.571" />
 
         <ImageButton
             android:id="@+id/ibPlay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
             android:layout_weight="1"
-            android:src="@drawable/btn_play" />
+            android:background="@drawable/btn_play"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        <ImageButton
+            android:id="@+id/ibDown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_down"
+            app:layout_constraintBottom_toBottomOf="@+id/ibPlay"
+            app:layout_constraintEnd_toEndOf="@+id/ibUp"
+            app:layout_constraintStart_toStartOf="@+id/ibUp"
+            app:layout_constraintTop_toBottomOf="@+id/ibUp" />
 
         <ImageButton
             android:id="@+id/ibUp"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/btn_up" />
+            android:background="@drawable/btn_up"
+            app:layout_constraintBottom_toTopOf="@+id/ibDown"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ibPlay"
+            app:layout_constraintTop_toTopOf="@+id/ibPlay" />
 
-        <ImageButton
-                android:id="@+id/ibDown"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/btn_down" />
-        </LinearLayout>
-
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include layout="@layout/part_result" />
 

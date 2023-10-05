@@ -128,9 +128,9 @@
 
     <EditText
         android:id="@+id/edNameProject"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:ems="10"
         android:fontFamily="@font/inter_medium"
@@ -139,22 +139,25 @@
         android:minHeight="48dp"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/btnAddFile"
+        app:layout_constraintEnd_toStartOf="@+id/btnRename"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/btnAddFile"
         app:layout_constraintTop_toTopOf="@+id/btnRename"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/tvNameProject"
-        android:scrollbars = "horizontal"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:ems="10"
         android:fontFamily="@font/inter_medium"
         android:inputType="text"
         android:minHeight="48dp"
+        android:scrollbars="horizontal"
         android:text=" Name"
         android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/edNameProject"
         app:layout_constraintStart_toStartOf="@+id/edNameProject"
         app:layout_constraintTop_toTopOf="@+id/edNameProject" />
 
