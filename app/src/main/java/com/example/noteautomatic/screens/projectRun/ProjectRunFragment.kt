@@ -10,7 +10,6 @@ import com.example.noteautomatic.R
 import com.example.noteautomatic.Repositories
 import com.example.noteautomatic.databinding.FragmentProjectRunBinding
 import com.example.noteautomatic.foundation.base.BaseFragment
-import com.example.noteautomatic.foundation.database.entities.Image
 import com.example.noteautomatic.navigator
 import com.example.noteautomatic.screens.onTryAgain
 import com.example.noteautomatic.screens.renderSimpleResult
@@ -27,7 +26,6 @@ class ProjectRunFragment : BaseFragment(R.layout.fragment_project_run) {
 
     private val args: ProjectRunFragmentArgs by navArgs()
     private var speed: Int = 100
-    private var images = mutableListOf<Image>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,6 +35,7 @@ class ProjectRunFragment : BaseFragment(R.layout.fragment_project_run) {
 
         setPause()
         createRecyclerView()
+        movePosition(0)
 
         with(binding) {
             viewModel.imagesFiles.observe(viewLifecycleOwner) { result ->
@@ -101,6 +100,7 @@ class ProjectRunFragment : BaseFragment(R.layout.fragment_project_run) {
 
         speed = args.projectSpeed
         val displayMetrics = DisplayMetrics()
+        @Suppress("DEPRECATION")
         requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
         val screenHeight = displayMetrics.heightPixels
         midScreenSpeed =
@@ -147,7 +147,7 @@ class ProjectRunFragment : BaseFragment(R.layout.fragment_project_run) {
 
     }
 
-    inner class SmoothScroller() :
+    inner class SmoothScroller :
         LinearSmoothScroller(requireContext()) {
         override fun getVerticalSnapPreference(): Int {
             return SNAP_TO_START

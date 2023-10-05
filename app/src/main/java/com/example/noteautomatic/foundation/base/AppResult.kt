@@ -24,10 +24,3 @@ class SuccessResult<T>(
 class ErrorResult<T>(
     val exception: Exception
 ) : AppResult<T>()
-
-fun <T> AppResult<T>?.takeSuccess(): T? {
-    return if (this is SuccessResult)
-        this.data
-    else
-        null
-}

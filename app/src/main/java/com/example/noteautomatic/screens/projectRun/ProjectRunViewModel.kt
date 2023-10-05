@@ -30,18 +30,19 @@ class ProjectRunViewModel(
     }
 
     fun loadImages(id: Long) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             _images.postValue(
-                SuccessResult(imagesRepository.loadImages(id)))
+                SuccessResult(imagesRepository.loadImages(id))
+            )
         }
     }
 
 
     private fun mergeSources() {
         val images = _images.value ?: return
-        var imageList = mutableListOf<Image>()
-        images.map {list ->
-            list.forEach{
+        val imageList = mutableListOf<Image>()
+        images.map { list ->
+            list.forEach {
                 if (it.countPages == -1)
                     imageList.add(it)
                 else for (i in 0 until it.countPages)
@@ -57,7 +58,7 @@ class ProjectRunViewModel(
     }
 
     fun tryAgain() {
-        _imagesFiles.value?.map{
+        _imagesFiles.value?.map {
             loadImages(it[0].projectId)
         }
     }

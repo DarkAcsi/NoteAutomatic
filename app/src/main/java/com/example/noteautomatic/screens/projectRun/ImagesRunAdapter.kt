@@ -36,6 +36,7 @@ class ImagesRunAdapter(private val actionListener: ImagesRunListener) :
             diffResult.dispatchUpdatesTo(this)
         }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
         if (event?.action == MotionEvent.ACTION_DOWN) {
             actionListener.setPauseScroll()
@@ -70,6 +71,7 @@ class ImagesRunAdapter(private val actionListener: ImagesRunListener) :
             val page = renderer?.openPage(image.countPages)
 
             val displayMetrics = DisplayMetrics()
+            @Suppress("DEPRECATION")
             (holder.itemView.context as Activity).windowManager.defaultDisplay.getMetrics(
                 displayMetrics
             )
@@ -81,7 +83,7 @@ class ImagesRunAdapter(private val actionListener: ImagesRunListener) :
                 )
             }
             val bounds = Rect(0, 0, bitmap?.width ?: 0, bitmap?.height ?: 0)
-            bitmap?.let { page?.render(it, bounds, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY) }
+            bitmap?.let { page.render(it, bounds, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY) }
             holder.binding.ivImageRun.setImageBitmap(bitmap)
             page?.close()
             renderer?.close()

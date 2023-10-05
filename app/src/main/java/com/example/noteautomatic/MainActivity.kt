@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity(), Navigator {
         onSupportNavigateUp()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         val navHost =
             supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
