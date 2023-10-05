@@ -79,6 +79,7 @@ class RoomProjectsRepository(
                 projects.removeAt(indexToDelete)
                 notifyChanges()
             }
+            imageDao.deleteImages(id)
             projectDao.deleteProjects(listOf(id))
         }
     }

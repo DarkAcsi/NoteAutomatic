@@ -79,6 +79,8 @@ class ProjectsAdapter(private val actionListener: ProjectActionListener) :
 
         binding.root.setOnClickListener(this)
         binding.root.setOnLongClickListener(this)
+        binding.tvItemProject.setOnClickListener(this)
+        binding.tvItemProject.setOnLongClickListener(this)
         binding.ivPlay.setOnClickListener(this)
 
         return ProjectsViewHolder(binding)
@@ -89,8 +91,9 @@ class ProjectsAdapter(private val actionListener: ProjectActionListener) :
         holder.itemView.tag = project
         with(holder.binding) {
             tvItemProject.text = project.name
-            ivPlay.tag = project
             tvItemProject.movementMethod = ScrollingMovementMethod()
+            ivPlay.tag = project
+            tvItemProject.tag = project
             when (project.selected) {
                 true -> {
                     ivPlay.setImageResource(R.drawable.checkbox_on)

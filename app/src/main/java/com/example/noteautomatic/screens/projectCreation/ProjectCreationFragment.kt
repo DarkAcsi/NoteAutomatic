@@ -48,9 +48,8 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentProjectCreationBinding.bind(view)
-        viewModel.loadProject(args.projectId)
-        binding.tvNameProject.movementMethod = ScrollingMovementMethod()
         createRecyclerView()
+        binding.tvNameProject.movementMethod = ScrollingMovementMethod()
 
         with(binding) {
             viewModel.viewState.observe(viewLifecycleOwner) { result ->
@@ -65,6 +64,7 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
                         toolbar.tvName.text = newProject.name
                     } else {
                         tvNameProject.text = newProject.name
+                        edNameProject.setText(newProject.name)
                         sbSpeed.progress = newProject.speed
                         edSpeed.setText(newProject.speed.toString())
                         toolbar.tvName.text = newProject.name
@@ -73,6 +73,7 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
                     }
                 }
             }
+            viewModel.loadProject(if (args.projectId > newProject.id) args.projectId else newProject.id)
 
             onTryAgain(root) {
                 viewModel.tryAgain()
@@ -187,11 +188,15 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
         }
     }
 
-    private fun pickImages() {
+    private fun openFileWithPermissionCheck(
+        mimeType: String,
+        launcher: ActivityResultLauncher<Intent>
+    ) {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 android.Manifest.permission.READ_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
+            )
+            != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
                 requireActivity(),
@@ -199,29 +204,28 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
                 requestPermission
             )
         } else {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-            imagePickerLauncher.launch(intent)
+            if (mimeType == "image/*") {
+                val intent =
+                    Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                launcher.launch(intent)
+            } else {
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    type = mimeType
+                }
+                launcher.launch(intent)
+            }
         }
     }
 
+
+    private fun pickImages() {
+        openFileWithPermissionCheck("image/*", imagePickerLauncher)
+    }
+
     private fun pickPdf() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                requestPermission
-            )
-        } else {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                type = "application/pdf"
-            }
-            pdfPickerLauncher.launch(intent)
-        }
+        openFileWithPermissionCheck("application/pdf", pdfPickerLauncher)
     }
 
     private fun changeSpeed(hasFocus: Boolean) {
@@ -272,7 +276,6 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
 
     private fun deleteProject() {
         viewModel.deleteProject(newProject.id) { navigator().toMenu() }
-        navigator().toMenu()
     }
 
     inner class Seekbar : SeekBar.OnSeekBarChangeListener {

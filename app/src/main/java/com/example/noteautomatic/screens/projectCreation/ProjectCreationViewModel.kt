@@ -2,6 +2,7 @@ package com.example.noteautomatic.screens.projectCreation
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import androidx.activity.result.ActivityResult
@@ -10,7 +11,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.noteautomatic.foundation.base.BaseViewModel
 import com.example.noteautomatic.foundation.base.LiveResult
 import com.example.noteautomatic.foundation.base.MediatorLiveResult
-import com.example.noteautomatic.foundation.base.MutableLiveResult
 import com.example.noteautomatic.foundation.base.PendingResult
 import com.example.noteautomatic.foundation.base.SuccessResult
 import com.example.noteautomatic.foundation.database.entities.Image
@@ -28,7 +28,7 @@ class ProjectCreationViewModel(
     private val _viewState = MediatorLiveResult<ViewState>(PendingResult())
     val viewState: LiveResult<ViewState> = _viewState
 
-    private val _project = MutableLiveResult<Project>(PendingResult())
+    private val _project = MutableLiveData<Project>()
     private val _listImage = MutableLiveData<List<Image>>()
     private val _isSaving = MutableLiveData(false)
 
@@ -45,10 +45,11 @@ class ProjectCreationViewModel(
 
     fun loadProject(id: Long) {
         viewModelScope.launch {
+            _viewState.postValue(PendingResult())
             val listImage = imagesRepository.loadImages(id)
-            val fullProject = projectsRepository.getById(id)
+            val project = projectsRepository.getById(id)
             _listImage.postValue(listImage)
-            _project.postValue(SuccessResult(fullProject))
+            _project.postValue(project)
         }
     }
 
@@ -60,9 +61,9 @@ class ProjectCreationViewModel(
         viewModelScope.launch {
             _isSaving.postValue(true)
             if ((project.id == 0L) and (nameEd.isEmpty())) {
-                _project.postValue(SuccessResult(project.copy(name = "This field is required")))
+                _project.postValue(project.copy(name = "This field is required"))
             } else if ((project.id == 0L) and (!projectsRepository.getNames(nameEd, project.id))) {
-                _project.postValue(SuccessResult(project.copy(name = "Name is already used")))
+                _project.postValue(project.copy(name = "Name is already used"))
             } else {
                 var fullProject =
                     if (projectsRepository.getNames(nameEd, project.id) and nameEd.isNotBlank())
@@ -74,9 +75,9 @@ class ProjectCreationViewModel(
                         _listImage.value?.isNotEmpty() == true
                     )
                 fullProject = projectsRepository.updateProject(fullProject)
-                _project.postValue(SuccessResult(fullProject))
-
                 imagesRepository.saveImages(fullProject.id)
+                _listImage.postValue(imagesRepository.loadImages(fullProject.id))
+                _project.postValue(projectsRepository.getById(fullProject.id))
             }
             _isSaving.postValue(false)
         }
@@ -95,14 +96,13 @@ class ProjectCreationViewModel(
                 _listImage.value?.isNotEmpty() == true
             )
             fullProject = projectsRepository.updateProject(fullProject)
-            _project.postValue(SuccessResult(fullProject))
+            _project.postValue(fullProject)
             _isSaving.postValue(false)
         }
     }
 
     fun deleteProject(id: Long, toMenu: () -> Unit) {
         viewModelScope.launch {
-            _project.postValue(PendingResult())
             projectsRepository.deleteProject(id)
             toMenu()
         }
@@ -113,6 +113,7 @@ class ProjectCreationViewModel(
             _isSaving.postValue(true)
             save()
             _isSaving.postValue(false)
+            _viewState.postValue(PendingResult())
             toMenu()
         }
     }
@@ -146,6 +147,10 @@ class ProjectCreationViewModel(
             result.data?.data?.let { uri ->
                 val pageCount = getPageCount(context, uri)
                 file = listOf(Image(0, 0, 0, uri, pageCount))
+                context.contentResolver.takePersistableUriPermission(
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
             }
             viewModelScope.launch {
                 _isSaving.postValue(true)
@@ -166,17 +171,13 @@ class ProjectCreationViewModel(
     }
 
     override fun deleteImage(image: Image) {
-        _project.value?.map {
-            viewModelScope.launch {
-                val play = imagesRepository.deleteImage(image) != 0
-                if (it.play != play) {
-                    _isSaving.postValue(true)
-                    projectsRepository.updateProject(it.copy(play = play))
-                    _project.postValue(
-                        SuccessResult(it.copy(play = play))
-                    )
-                    _isSaving.postValue(false)
-                }
+        viewModelScope.launch {
+            val play = imagesRepository.deleteImage(image) != 0
+            if (_project.value?.play != play) {
+                _isSaving.postValue(true)
+                _project.value?.copy(play = play)?.let { projectsRepository.updateProject(it) }
+                _project.postValue(_project.value?.copy(play = play))
+                _isSaving.postValue(false)
             }
         }
     }
@@ -189,13 +190,13 @@ class ProjectCreationViewModel(
         val project = _project.value ?: return
         val listImage = _listImage.value ?: return
         val isSaving = _isSaving.value ?: return
-        _viewState.value = project.map {
+        _viewState.value = SuccessResult(
             ViewState(
-                project = it,
+                project = project,
                 listImage = listImage,
                 isSaving = isSaving
             )
-        }
+        )
     }
 
     override fun onCleared() {
