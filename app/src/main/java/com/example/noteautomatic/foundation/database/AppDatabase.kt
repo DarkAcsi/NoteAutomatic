@@ -10,7 +10,7 @@ import com.example.noteautomatic.foundation.database.entities.Project
 
 
 @Database(
-    version = 6,
+    version = 8,
     entities = [
         Project::class,
         Image::class

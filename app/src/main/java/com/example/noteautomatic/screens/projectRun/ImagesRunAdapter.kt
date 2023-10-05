@@ -1,6 +1,11 @@
 package com.example.noteautomatic.screens.projectRun
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.graphics.Bitmap
+import android.graphics.Rect
+import android.graphics.pdf.PdfRenderer
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -54,9 +59,33 @@ class ImagesRunAdapter(private val actionListener: ImagesRunListener) :
         val image = images[position]
         holder.itemView.tag = image
         holder.binding.ivImageRun.tag = image
-        Glide.with(holder.itemView.context)
-                    .load(image.resImage)
-                    .into(holder.binding.ivImageRun)
+        if (image.countPages == -1) {
+            Glide.with(holder.itemView.context)
+                .load(image.resImage)
+                .into(holder.binding.ivImageRun)
+        } else {
+            val fileDescriptor =
+                holder.itemView.context.contentResolver.openFileDescriptor(image.resImage, "r")
+            val renderer = fileDescriptor?.let { PdfRenderer(it) }
+            val page = renderer?.openPage(image.countPages)
+
+            val displayMetrics = DisplayMetrics()
+            (holder.itemView.context as Activity).windowManager.defaultDisplay.getMetrics(
+                displayMetrics
+            )
+            val screenWidth = displayMetrics.widthPixels
+            val bitmap = page?.width?.let {
+                Bitmap.createBitmap(
+                    screenWidth, (screenWidth.toFloat() / it.toFloat() * page.height).toInt(),
+                    Bitmap.Config.ARGB_8888
+                )
+            }
+            val bounds = Rect(0, 0, bitmap?.width ?: 0, bitmap?.height ?: 0)
+            bitmap?.let { page?.render(it, bounds, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY) }
+            holder.binding.ivImageRun.setImageBitmap(bitmap)
+            page?.close()
+            renderer?.close()
+        }
     }
 
     class ImagesRunViewHolder(

@@ -10,7 +10,9 @@ import com.example.noteautomatic.R
 import com.example.noteautomatic.Repositories
 import com.example.noteautomatic.databinding.FragmentProjectRunBinding
 import com.example.noteautomatic.foundation.base.BaseFragment
+import com.example.noteautomatic.foundation.database.entities.Image
 import com.example.noteautomatic.navigator
+import com.example.noteautomatic.screens.onTryAgain
 import com.example.noteautomatic.screens.renderSimpleResult
 import com.example.noteautomatic.viewModelCreator
 
@@ -25,6 +27,7 @@ class ProjectRunFragment : BaseFragment(R.layout.fragment_project_run) {
 
     private val args: ProjectRunFragmentArgs by navArgs()
     private var speed: Int = 100
+    private var images = mutableListOf<Image>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,30 +38,34 @@ class ProjectRunFragment : BaseFragment(R.layout.fragment_project_run) {
         setPause()
         createRecyclerView()
 
-        viewModel.images.observe(viewLifecycleOwner) { result ->
-            renderSimpleResult(binding.root, result) {
-                val previousPosition =
-                    (binding.rvRunProject.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-                adapter.images = it
-                binding.rvRunProject.scrollToPosition(previousPosition)
+        with(binding) {
+            viewModel.imagesFiles.observe(viewLifecycleOwner) { result ->
+                renderSimpleResult(root, result) {
+                    val previousPosition =
+                        (rvRunProject.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                    adapter.images = it
+                    rvRunProject.scrollToPosition(previousPosition)
+                }
             }
+
+            toolbar.ibHome.setOnClickListener { navigator().toMenu() }
+            createRecyclerView()
+
+            toolbar.ibBack.setOnClickListener { navigator().navigateUp() }
+
+            ibRestart.setOnClickListener { movePosition(0) }
+
+            ibPlay.setOnClickListener {
+                setPlay()
+                runProject()
+            }
+
+            ibUp.setOnClickListener { movePosition(-1) }
+
+            ibDown.setOnClickListener { movePosition(1) }
+
+            onTryAgain(root) { viewModel.tryAgain() }
         }
-
-        binding.toolbar.ibHome.setOnClickListener { navigator().toMenu() }
-        createRecyclerView()
-
-        binding.toolbar.ibBack.setOnClickListener { navigator().navigateUp() }
-
-        binding.ibRestart.setOnClickListener {movePosition(0)}
-
-        binding.ibPlay.setOnClickListener {
-            setPlay()
-            runProject()
-        }
-
-        binding.ibUp.setOnClickListener { movePosition(-1) }
-
-        binding.ibDown.setOnClickListener { movePosition(1) }
 
     }
 

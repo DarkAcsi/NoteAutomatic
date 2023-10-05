@@ -1,5 +1,8 @@
 package com.example.noteautomatic.screens.projectCreation
 
+import android.graphics.Bitmap
+import android.graphics.pdf.PdfRenderer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +14,7 @@ import com.example.noteautomatic.R
 import com.example.noteautomatic.databinding.ItemImageBinding
 import com.example.noteautomatic.foundation.database.entities.Image
 import com.example.noteautomatic.screens.ImageDiffCallback
+import java.io.File
 
 
 interface ImageActionListener {
@@ -93,11 +97,25 @@ class ImagesAdapter(private val actionListener: ImageActionListener) :
         holder.itemView.tag = image
         with(holder.binding) {
             btnDelete.tag = image
-            with(holder.binding) {
-                btnDelete.tag = image
+            if (image.countPages == -1) {
                 Glide.with(holder.itemView.context)
                     .load(image.resImage)
                     .into(ivImage)
+            } else {
+                tvIsFile.visibility = View.VISIBLE
+                tvIsFile.text = "file"
+                val fileDescriptor = holder.itemView.context.contentResolver.openFileDescriptor(image.resImage, "r")
+                val renderer = fileDescriptor?.let { PdfRenderer(it) }
+                val firstPage = renderer?.openPage(0)
+                val bitmap =
+                    firstPage?.width?.let { firstPage.height.let { it1 ->
+                        Bitmap.createBitmap(it,
+                            it1, Bitmap.Config.ARGB_8888)
+                    } }
+                bitmap?.let { firstPage.render(it, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY) }
+                ivImage.setImageBitmap(bitmap)
+                firstPage?.close()
+                renderer?.close()
             }
         }
     }

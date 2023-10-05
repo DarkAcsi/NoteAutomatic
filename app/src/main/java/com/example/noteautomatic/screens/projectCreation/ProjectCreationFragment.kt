@@ -1,9 +1,7 @@
 package com.example.noteautomatic.screens.projectCreation
 
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
@@ -20,7 +18,6 @@ import com.example.noteautomatic.R
 import com.example.noteautomatic.Repositories
 import com.example.noteautomatic.databinding.FragmentProjectCreationBinding
 import com.example.noteautomatic.foundation.base.BaseFragment
-import com.example.noteautomatic.foundation.database.entities.Image
 import com.example.noteautomatic.foundation.database.entities.Project
 import com.example.noteautomatic.navigator
 import com.example.noteautomatic.screens.onTryAgain
@@ -32,6 +29,8 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
     private lateinit var binding: FragmentProjectCreationBinding
     private lateinit var adapter: ImagesAdapter
     private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
+    private lateinit var pdfPickerLauncher: ActivityResultLauncher<Intent>
+
 
     override val viewModel by viewModelCreator {
         ProjectCreationViewModel(
@@ -90,7 +89,7 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
 
             btnAddImage.setOnClickListener { pickImages() }
 
-            btnAddFile.setOnClickListener { /*pickImages()*/ }
+            btnAddFile.setOnClickListener { pickPdf() }
 
             sbSpeed.setOnSeekBarChangeListener(Seekbar())
 
@@ -110,22 +109,12 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
 
         imagePickerLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    val data = result.data
-                    val imagesUri = mutableListOf<Uri>()
-                    val images = mutableListOf<Image>()
+                viewModel.createImagePicker(result, newProject)
+            }
 
-                    data?.clipData?.let { clipData ->
-                        for (i in 0 until clipData.itemCount) {
-                            imagesUri.add(clipData.getItemAt(i).uri)
-                            images.add(Image(0, 0, 0, clipData.getItemAt(i).uri))
-                        }
-                    } ?: data?.data?.let { uri ->
-                        imagesUri.add(uri)
-                        images.add(Image(0, 0, 0, uri))
-                    }
-                    viewModel.saveImages(images, newProject)
-                }
+        pdfPickerLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                viewModel.createPdfPicker(result, newProject, requireContext())
             }
     }
 
@@ -211,6 +200,25 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
             imagePickerLauncher.launch(intent)
+        }
+    }
+
+    private fun pickPdf() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+                requestPermission
+            )
+        } else {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                type = "application/pdf"
+            }
+            pdfPickerLauncher.launch(intent)
         }
     }
 

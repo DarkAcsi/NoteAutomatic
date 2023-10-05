@@ -1,5 +1,10 @@
 package com.example.noteautomatic.screens.projectCreation
 
+import android.app.Activity
+import android.content.Context
+import android.graphics.pdf.PdfRenderer
+import android.net.Uri
+import androidx.activity.result.ActivityResult
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.noteautomatic.foundation.base.BaseViewModel
@@ -77,7 +82,7 @@ class ProjectCreationViewModel(
         }
     }
 
-    fun saveImages(listImage: List<Image>, project: Project) {
+    private fun saveImages(listImage: List<Image>, project: Project) {
         if (project.id == 0L) imagesRepository.localUpdate(listImage)
         else viewModelScope.launch {
             _isSaving.postValue(true)
@@ -95,11 +100,10 @@ class ProjectCreationViewModel(
         }
     }
 
-    fun deleteProject(id: Long, toMenu:() -> Unit ) {
+    fun deleteProject(id: Long, toMenu: () -> Unit) {
         viewModelScope.launch {
-            _isSaving.postValue(true)
+            _project.postValue(PendingResult())
             projectsRepository.deleteProject(id)
-            _isSaving.postValue(false)
             toMenu()
         }
     }
@@ -111,6 +115,54 @@ class ProjectCreationViewModel(
             _isSaving.postValue(false)
             toMenu()
         }
+    }
+
+    fun createImagePicker(result: ActivityResult, newProject: Project) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            val imagesUri = mutableListOf<Uri>()
+            val images = mutableListOf<Image>()
+
+            data?.clipData?.let { clipData ->
+                for (i in 0 until clipData.itemCount) {
+                    imagesUri.add(clipData.getItemAt(i).uri)
+                    images.add(Image(0, 0, 0, clipData.getItemAt(i).uri, -1))
+                }
+            } ?: data?.data?.let { uri ->
+                imagesUri.add(uri)
+                images.add(Image(0, 0, 0, uri, -1))
+            }
+            viewModelScope.launch {
+                _isSaving.postValue(true)
+                saveImages(images, newProject)
+                _isSaving.postValue(false)
+            }
+        }
+    }
+
+    fun createPdfPicker(result: ActivityResult, newProject: Project, context: Context) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            var file = emptyList<Image>()
+            result.data?.data?.let { uri ->
+                val pageCount = getPageCount(context, uri)
+                file = listOf(Image(0, 0, 0, uri, pageCount))
+            }
+            viewModelScope.launch {
+                _isSaving.postValue(true)
+                saveImages(file, newProject)
+                _isSaving.postValue(false)
+            }
+        }
+    }
+
+    private fun getPageCount(context: Context, uri: Uri): Int {
+        var pageCount = 0
+        context.contentResolver.openFileDescriptor(uri, "r")?.use { pfd ->
+            PdfRenderer(pfd).use { pdfRenderer ->
+                pageCount = pdfRenderer.pageCount
+            }
+        }
+        return pageCount
     }
 
     override fun deleteImage(image: Image) {
