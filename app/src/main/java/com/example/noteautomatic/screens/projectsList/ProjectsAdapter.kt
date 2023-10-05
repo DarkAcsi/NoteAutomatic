@@ -1,6 +1,7 @@
 package com.example.noteautomatic.screens.projectsList
 
 import android.annotation.SuppressLint
+import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -89,6 +90,7 @@ class ProjectsAdapter(private val actionListener: ProjectActionListener) :
         with(holder.binding) {
             tvItemProject.text = project.name
             ivPlay.tag = project
+            tvItemProject.movementMethod = ScrollingMovementMethod()
             when (project.selected) {
                 true -> {
                     ivPlay.setImageResource(R.drawable.checkbox_on)

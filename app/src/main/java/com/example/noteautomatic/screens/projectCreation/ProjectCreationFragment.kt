@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.method.ScrollingMovementMethod
 import android.view.View
 import android.widget.SeekBar
 import androidx.activity.result.ActivityResultLauncher
@@ -48,6 +49,7 @@ class ProjectCreationFragment : BaseFragment(R.layout.fragment_project_creation)
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentProjectCreationBinding.bind(view)
         viewModel.loadProject(args.projectId)
+        binding.tvNameProject.movementMethod = ScrollingMovementMethod()
         createRecyclerView()
 
         with(binding) {

@@ -36,11 +36,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/new_project" />
-        <!--        TODO: добавить для этого поля в коде
-        tvItemProject.setMovementMethod
-        (new ScrollingMovementMethod());,
-         желательно то же самое для поля имени
-         в настройках проекта-->
 
         <ImageView
             android:id="@+id/ivPlay"
