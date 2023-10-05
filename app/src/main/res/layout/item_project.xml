@@ -14,15 +14,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" >
 
         <TextView
             android:id="@+id/tvItemProject"
-            android:layout_width="330dp"
-            android:layout_height="62dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:clickable="false"
             android:ellipsize="end"
+            android:clickable="false"
             android:fontFamily="@font/inter_medium"
             android:gravity="center_vertical"
             android:maxLines="1"
@@ -30,10 +31,16 @@
             android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ivPlay"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/new_project" />
-        <!--        TODO: добавить для этого поля в коде tvItemProject.setMovementMethod(new ScrollingMovementMethod());, желательно то же самое для поля имени в настройках проекта-->
+        <!--        TODO: добавить для этого поля в коде
+        tvItemProject.setMovementMethod
+        (new ScrollingMovementMethod());,
+         желательно то же самое для поля имени
+         в настройках проекта-->
 
         <ImageView
             android:id="@+id/ivPlay"
